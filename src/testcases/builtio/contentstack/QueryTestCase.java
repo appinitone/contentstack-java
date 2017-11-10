@@ -1,4 +1,4 @@
-package com.builtio.contentstack.testcases;
+package testcases.builtio.contentstack;
 
 import com.builtio.contentstack.*;
 import com.builtio.contentstack.Error;
@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 /**
@@ -37,7 +36,7 @@ public class QueryTestCase  extends JUnitCore {
 
     public QueryTestCase() throws Exception {
         Config config = new Config();
-        config.setHost("cdn.contentstack.io");
+        config.setHost("api.contentstack.io");
         stack = Contentstack.stack( DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
         containArray = new String[]{"Roti Maker", "kids dress"};
         latch = new CountDownLatch(1);
@@ -1145,6 +1144,136 @@ public class QueryTestCase  extends JUnitCore {
         latch.await();
 
     }
+
+
+
+
+
+       /* include content type added*/
+
+
+
+
+       @Test
+       public void test_39_includeSchema() throws InterruptedException, ParseException {
+
+        ContentType ct = stack.contentType("product");
+        Query query = ct.query();
+        query.includeSchema();
+        final Object result[] = new Object[]{new Object()};
+
+        query.find(new QueryResultsCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
+
+                if (error == null) {
+                    result[0] = queryresult.getSchema();
+                    latch.countDown();
+                } else {
+                    result[0] = error.getErrorCode();
+                    latch.countDown();
+                }
+            }
+        });
+        latch.await();
+        JSONArray schema = null;
+        schema = (JSONArray) result[0];
+        assertTrue(schema !=  null);
+    }
+
+
+    @Test
+    public void test_40_includeContentType() throws InterruptedException, ParseException {
+
+        ContentType ct = stack.contentType("product");
+        Query query = ct.query();
+        query.includeContentType();
+        final Object result[] = new Object[]{new Object()};
+
+        query.find(new QueryResultsCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
+
+                if (error == null) {
+                    result[0] = queryresult.getContentType();
+                    latch.countDown();
+                } else {
+                    result[0] = error.getErrorCode();
+                    latch.countDown();
+                }
+            }
+        });
+        latch.await();
+        JSONObject schema = null;
+        schema = (JSONObject) result[0];
+        assertTrue(schema !=  null);
+    }
+
+
+
+    @Test
+    public void test_41_include_content_type() throws InterruptedException, ParseException {
+
+        ContentType ct = stack.contentType("product");
+        Query query = ct.query();
+        query.includeSchema();
+        query.includeContentType();
+        final Object result[] = new Object[]{new Object()};
+
+        query.find(new QueryResultsCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
+
+                if (error == null) {
+                    result[0] = queryresult.getContentType();
+                    latch.countDown();
+                } else {
+                    result[0] = error.getErrorCode();
+                    latch.countDown();
+                }
+            }
+        });
+        latch.await();
+        JSONObject schema = null;
+        schema = (JSONObject) result[0];
+        assertTrue(schema !=  null);
+    }
+
+
+
+
+    @Test
+    public void test_42_include_content_type() throws InterruptedException, ParseException {
+
+        ContentType ct = stack.contentType("product");
+        Query query = ct.query();
+        query.includeContentType();
+        query.includeSchema();
+        final Object result[] = new Object[]{new Object()};
+
+        query.find(new QueryResultsCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
+
+                if (error == null) {
+                    result[0] = queryresult.getContentType();
+                    latch.countDown();
+                } else {
+                    result[0] = error.getErrorCode();
+                    latch.countDown();
+                }
+            }
+        });
+        latch.await();
+        JSONObject schema = null;
+        schema = (JSONObject) result[0];
+        assertTrue(schema !=  null);
+    }
+
+
+
+
+
 
 
     private void printLog( String logMessage){

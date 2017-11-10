@@ -1,4 +1,4 @@
-package com.builtio.contentstack.testcases;
+package testcases.builtio.contentstack;
 
 
 import com.builtio.contentstack.*;
@@ -8,9 +8,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
+
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
-import static junit.framework.TestCase.*;
+
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Created by Shailesh Mishra on 22/8/16.
@@ -28,7 +30,7 @@ public class EntryTestCase extends JUnitCore {
 
     public EntryTestCase() throws Exception{
         Config config = new Config();
-        config.setHost("cdn.contentstack.io");
+        config.setHost("api.contentstack.io");
         stack = Contentstack.stack( DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV,config);
         uidArray = new String[]{"blte88d9bec040e7c7c", "bltdf783472903c3e21"};
         latch = new CountDownLatch(1);
