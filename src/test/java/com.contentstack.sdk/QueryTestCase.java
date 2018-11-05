@@ -20,9 +20,9 @@ import static junit.framework.TestCase.assertTrue;
 public class QueryTestCase  extends JUnitCore {
 
     private static final String TAG = "QueryTestCase";
-    public static final String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
-    public static final String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
-    public static final String DEFAULT_ENV = "env1";
+    private static final String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
+    private static final String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
+    private static final String DEFAULT_ENV = "env1";
 
     private CountDownLatch latch;
     private Stack stack;
@@ -558,7 +558,7 @@ public class QueryTestCase  extends JUnitCore {
 
 
     @Test
-    public void test_19_search() throws InterruptedException, ParseException {
+    public void test_19_search() throws InterruptedException {
         String head = "laptop";
 
         ContentType ct = stack.contentType("product");
@@ -591,9 +591,7 @@ public class QueryTestCase  extends JUnitCore {
                     String key = iter.next();
                     try {
                         Object value = jsonObject.opt(key);
-                        if(value instanceof String && ((String) value).contains("dress")){
-
-                        }
+                        if(value instanceof String && ((String) value).contains("dress")) System.out.println(value);
                     } catch (Exception e) {
                         CSAppUtils.showLog(TAG, "----------------setQueryJson"+e.toString());
                     }
