@@ -204,6 +204,8 @@ public class EntryTestCase extends JUnitCore {
         latch.await();
 
     }
+
+
     @Test
     public void test_07_getMarkdown_fetch() throws InterruptedException {
         final Entry entry = stack.contentType("user").entry("blt3b0aaebf6f1c3762");

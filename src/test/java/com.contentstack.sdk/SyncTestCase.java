@@ -30,51 +30,52 @@ public class SyncTestCase {
 
 
     @Test
-    public void test00_SyncInit() {
+    public void testSyncInit() {
 
         stack.sync(new SyncResultCallBack() {
             @Override
             public void onCompletion(SyncStack syncStack, Error error) {
-
+                counter = 33;
                 if (error == null) {
-                    itemsSize += syncStack.getItems().size();
+
+                    itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
 
-                    System.out.println("syncStack.getItems().size()=============== "+syncStack.getItems().size());
-                    System.out.println("Count==============="+syncStack.getCount());
+                    printLog("sync stack size  :"+syncStack.getItems().size());
+                    printLog("sync stack count  :"+syncStack.getCount());
                     syncStack.getItems().forEach(item->{
-                        System.out.println("item: --> "+item);
+                        printLog("init sync item: --> "+item.toString());
                     });
                 }
 
             }});
 
-        assertEquals(itemsSize, counter);
+        assertEquals(123, counter);
     }
 
 
 
 
     @Test
-    public void test03_sync_with_syncToken() {
+    public void testSyncToken() {
         stack.syncToken("bltbb61f31a70a572e6c9506a", new SyncResultCallBack() {
             @Override
             public void onCompletion(SyncStack syncStack, Error error) {
 
                 if (error == null) {
-                    itemsSize += syncStack.getItems().size();
+                    itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
 
-                    System.out.println("sync token=============== "+syncStack.getItems().size());
-                    System.out.println("sync count==============="+syncStack.getCount());
+                    printLog("sync token size  :"+syncStack.getItems().size());
+                    printLog("sync token count  :"+syncStack.getCount());
                     syncStack.getItems().forEach(item->{
-                        System.out.println("item: --> "+item);
+                        printLog("token item: --> "+item.toString());
                     });
                 }
             }
         });
 
-        assertEquals( itemsSize, counter);
+        assertEquals( 100, itemsSize);
     }
 
 
@@ -92,13 +93,13 @@ public class SyncTestCase {
                     itemsSize += syncStack.getItems().size();
                     counter = syncStack.getCount();
 
-                    System.out.println("Pagination token=============== "+syncStack.getItems().size());
-                    System.out.println("pagination count==============="+syncStack.getCount());
+                    printLog("sync pagination size  :"+syncStack.getItems().size());
+                    printLog("sync pagination count  :"+syncStack.getCount());
                     syncStack.getItems().forEach(item->{
-                        System.out.println("item: --> "+item);
+                        printLog("pagination item: --> "+item.toString());
                     });
                 }
-                assertEquals( 7, itemsSize);
+                assertEquals( 100, itemsSize);
             }
         });
 
@@ -109,7 +110,7 @@ public class SyncTestCase {
 
 
     @Test
-    public void test02__syncWithDate() throws ParseException {
+    public void testSyncWithDate() throws ParseException {
 
         final Date start_date = sdf.parse("2018-10-07");
         stack.syncFromDate(start_date, new SyncResultCallBack() {
@@ -138,7 +139,7 @@ public class SyncTestCase {
                     }
                 }
 
-                assertEquals(itemsSize, counter);
+                assertEquals(100, itemsSize);
             }});
     }
 
@@ -147,7 +148,7 @@ public class SyncTestCase {
 
 
     @Test
-    public void test04_sync_with_contentType() {
+    public void testSyncWithContentType() {
 
         stack.syncContentType("session", new SyncResultCallBack() {
             @Override
@@ -156,22 +157,22 @@ public class SyncTestCase {
                     itemsSize += syncStack.getItems().size();
                     counter = syncStack.getCount();
 
-                    System.out.println("content type size============ "+syncStack.getItems().size());
-                    System.out.println("content count========="+syncStack.getCount());
+                    printLog("sync content type size  :"+syncStack.getItems().size());
+                    printLog("sync content type count  :"+syncStack.getCount());
                     syncStack.getItems().forEach(item->{
-                        System.out.println("item: --> "+item);
+                        printLog("content tyope item: --> "+item.toString());
                     });
                 }
             }
         });
 
-        assertEquals(counter, itemsSize);
+        assertEquals(100, itemsSize);
     }
 
 
 
     @Test
-    public void test05_sync_with_locale() {
+    public void testSyncWithLocale() {
 
         stack.syncLocale(Language.ENGLISH_UNITED_STATES, new SyncResultCallBack() {
             @Override
@@ -184,11 +185,19 @@ public class SyncTestCase {
                     for (JSONObject object: items){
                         if (object.has("data"))
                             dataObject = object.optJSONObject("data").optString("locale");
-                        System.out.println("locale:===>"+dataObject);
+                        printLog("locale dataObject: --> "+dataObject.toString());
+
                         if (!dataObject.isEmpty()) {
+                            printLog("locale dataObject: --> "+dataObject.toString());
                             assertEquals("en-us", dataObject);
                         }
                     }
+
+                    printLog("sync stack size  :"+syncStack.getItems().size());
+                    printLog("sync stack count  :"+syncStack.getCount());
+                    syncStack.getItems().forEach(item->{
+                        printLog("item: --> "+item.toString());
+                    });
                 }
             }
         });
@@ -205,15 +214,13 @@ public class SyncTestCase {
             @Override
             public void onCompletion(SyncStack syncStack, Error error) {
                 if (error == null) {
-                    // Success block
-                    counter = syncStack.getItems().size();
-                    itemsSize = syncStack.getCount();
+                    itemsSize = syncStack.getItems().size();
+                    counter = syncStack.getCount();
 
                     System.out.println("publish type==>"+counter);
                     syncStack.getItems().forEach(items->{
                         System.out.println("publish type items-->"+items.toString());
                     });
-
                 }else {
                     // Error block
                     System.out.println("publish type error !");
@@ -221,7 +228,7 @@ public class SyncTestCase {
             }
         });
 
-        assertEquals(counter, itemsSize);
+        assertEquals(100, itemsSize);
     }
 
 
@@ -229,7 +236,7 @@ public class SyncTestCase {
 
 
     @Test
-    public void test06_sync_with_all() throws ParseException {
+    public void testSyncWithAll() throws ParseException {
 
         Date start_date = sdf.parse("2018-10-10");
         stack.sync( "session", start_date, Language.ENGLISH_UNITED_STATES, Stack.PublishType.entry_published, new SyncResultCallBack() {
@@ -246,21 +253,10 @@ public class SyncTestCase {
                     });
                 }
 
-                assertEquals(counter, itemsSize);
+                assertEquals(100, itemsSize);
             }
 
         });
-    }
-
-
-
-
-    public String convertUTCToISO(Date date) {
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-        dateFormat.setTimeZone(tz);
-        System.out.println("Date to ISO------>"+dateFormat.format(date));
-        return dateFormat.format(date);
     }
 
 
@@ -270,4 +266,9 @@ public class SyncTestCase {
         return dateFormate[0];
     }
 
+
+
+    private void printLog( String logMessage){
+        System.out.println(logMessage);
+    }
 }

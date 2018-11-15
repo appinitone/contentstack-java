@@ -24,7 +24,6 @@ public class QueryTestCase  extends JUnitCore {
     private static final String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
     private static final String DEFAULT_ENV = "env1";
 
-    private CountDownLatch latch;
     private Stack stack;
     private String[] containArray;
     private ArrayList<Entry> entries = null;
@@ -35,7 +34,6 @@ public class QueryTestCase  extends JUnitCore {
         config.setHost("api.contentstack.io");
         stack = Contentstack.stack( DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
         containArray = new String[]{"Roti Maker", "kids dress"};
-        latch = new CountDownLatch(1);
     }
 
 
@@ -50,13 +48,13 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         List<Entry> entries = null;
         try{
             entries = (List<Entry>) result[0];
@@ -77,14 +75,14 @@ public class QueryTestCase  extends JUnitCore {
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
                     s[0] = error.getErrorMessage().trim();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
         List<Entry> entries = null;
         try{
@@ -112,19 +110,17 @@ public class QueryTestCase  extends JUnitCore {
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
 
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+                    List<Entry> titles = queryresult.getResultObjects();
+                    titles.forEach(title->{
+                        printLog("title: "+title.getString("title"));
+                    });
+
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
-        Entry entry = null;
-//        entry = ((List<Entry>) result[0]).get(0);
-//        if(entry != null){
-//            printLog("Test_02-------->"+entry.getString("title"));
-//        }
+
     }
 
 
@@ -142,13 +138,13 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         List<Entry> entries = null;
         entries = (List<Entry>) result[0];
         if(entries != null){
@@ -171,13 +167,13 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -194,14 +190,14 @@ public class QueryTestCase  extends JUnitCore {
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
 
                 if (error == null) {
-                    entries = (ArrayList<Entry>) queryresult.getResultObjects();
-                    latch.countDown();
+                    List<Entry> entries = queryresult.getResultObjects();
+                    entries.forEach(entry -> printLog("title..?  :"+entry.get("price")));
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
         if(entries != null) {
             boolean isContains = false;
@@ -229,14 +225,14 @@ public class QueryTestCase  extends JUnitCore {
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
 
                 if (error == null) {
-                    entries = (ArrayList<Entry>) queryresult.getResultObjects();
-                    latch.countDown();
+                    List<Entry> entries = queryresult.getResultObjects();
+                    entries.forEach(entry -> printLog("Title..?  :"+entry.get("price")));
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         if(entries != null) {
             boolean isContains = false;
             for (Entry entry : entries) {
@@ -262,14 +258,14 @@ public class QueryTestCase  extends JUnitCore {
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
 
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+                    List<Entry> entries = queryresult.getResultObjects();
+                    entries.forEach(entry -> printLog("Is title yellow t shirt..?  :"+entry.get("title")));
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -287,14 +283,14 @@ public class QueryTestCase  extends JUnitCore {
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
 
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+                    List<Entry> entries = queryresult.getResultObjects();
+                    entries.forEach(entry -> printLog("Is price greater or eqaul to 90..?  :"+entry.get("price")));
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -311,14 +307,14 @@ public class QueryTestCase  extends JUnitCore {
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
 
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+                    List<Entry> entries = queryresult.getResultObjects();
+                    entries.forEach(entry -> printLog("Is price greater than 90..?  :"+entry.get("price")));
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -330,21 +326,19 @@ public class QueryTestCase  extends JUnitCore {
     public void test_10_fetchEntryLessThanEqualField() throws InterruptedException, ParseException {
 
         Query query = stack.contentType("product").query();
-        final Object result[] = new Object[]{new Object()};
         query.lessThanOrEqualTo("price", 90);
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
 
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    latch.countDown();
-                } else {
-                    latch.countDown();
+
+                    List<Entry> entries = queryresult.getResultObjects();
+                    entries.forEach(entry -> printLog("Is price less than 90..?  :"+entry.get("price")));
+
                 }
             }
         });
-        latch.await();
 
     }
 
@@ -356,29 +350,22 @@ public class QueryTestCase  extends JUnitCore {
     public void test_11_fetchEntryLessThanField() throws InterruptedException, ParseException {
 
         Query query = stack.contentType("product").query();
-        final Object result[] = new Object[]{new Object()};
-        query.lessThan("price", 90);
+        query.lessThan("price", "90");
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
 
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+                    List<Entry> resp = queryresult.getResultObjects();
+                    resp.forEach(entry -> {
+                        printLog("Is price less than 90..? "+entry.get("price"));
+                    });
+
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
-        List<Entry> entries = null;
-        entries = (List<Entry>) result[0];
-
-        Integer count = 0;
-        for(Entry entry: entries) {
-            Object entryPrice = entry.get("price");
-            printLog(entryPrice.toString());
-        }
 
     }
 
@@ -411,13 +398,13 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         List<Entry> entries = null;
         entries = (List<Entry>) result[0];
 
@@ -454,13 +441,13 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -484,13 +471,13 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -515,13 +502,13 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
     }
 
 
@@ -541,14 +528,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getSchema();
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
 
     }
@@ -572,14 +559,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         List<Entry> entries = null;
         entries = (List<Entry>) result[0];
         if(entries != null){
@@ -623,10 +610,10 @@ public class QueryTestCase  extends JUnitCore {
                         printLog( entry.getString("title"));
                     }
 
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
@@ -644,14 +631,14 @@ public class QueryTestCase  extends JUnitCore {
                         printLog( entry.getString("title"));
                     }
 
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
 
     }
@@ -678,14 +665,14 @@ public class QueryTestCase  extends JUnitCore {
                         printLog(entry.getString("title"));
                     }
 
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -711,14 +698,14 @@ public class QueryTestCase  extends JUnitCore {
                         printLog(" entry = [" + entry.getString("title") + "]");
                     }
 
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
 
     }
@@ -740,14 +727,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
 
     }
@@ -770,14 +757,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     entries = (ArrayList<Entry>) queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
                     //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         if(entries != null) {
             boolean isContains = false;
             for (Entry entry : entries) {
@@ -806,14 +793,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     entries = (ArrayList<Entry>) queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
                     //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -832,14 +819,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getCount();
-                    latch.countDown();
+
                 } else {
                     //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -859,14 +846,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     entries = (ArrayList<Entry>) queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
                     //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -886,14 +873,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     entries = (ArrayList<Entry>) queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
                     //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -913,14 +900,13 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getCount();
-                    latch.countDown();
+
                 } else {
-                    //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -942,14 +928,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
                     //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -957,25 +943,23 @@ public class QueryTestCase  extends JUnitCore {
     @Test
     public void test_33_language() throws InterruptedException, ParseException {
 
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+        Query query = stack.contentType("product").query();
         query.language(Language.ENGLISH_UNITED_KINGDOM);
         final Object result[] = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
                     //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -996,14 +980,14 @@ public class QueryTestCase  extends JUnitCore {
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
                     result[1] = queryresult.getCount();
-                    latch.countDown();
+
                 } else {
                     //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -1032,14 +1016,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     entries = (ArrayList<Entry>) queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
                     //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -1059,14 +1043,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     entries = (ArrayList<Entry>) queryresult.getResultObjects();
-                    latch.countDown();
+
                 } else {
                     //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -1085,14 +1069,14 @@ public class QueryTestCase  extends JUnitCore {
             public void onCompletion(ResponseType responseType, Entry entry, Error error) {
                 if (error == null) {
                     result[0] = entry;
-                    latch.countDown();
+
                 } else {
                     //result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         try {
 
             if (result.length>0){
@@ -1129,13 +1113,13 @@ public class QueryTestCase  extends JUnitCore {
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
                     printLog("responseType = [" + responseType + "], queryresult = [" + queryresult.getResultObjects().size() + "]");
-                    latch.countDown();
+
                 } else {
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
 
     }
 
@@ -1162,14 +1146,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getSchema();
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         JSONArray schema = null;
         schema = (JSONArray) result[0];
         //assertTrue(schema !=  null);
@@ -1190,14 +1174,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getContentType();
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         JSONObject schema = null;
         schema = (JSONObject) result[0];
        // assertTrue(schema !=  null);
@@ -1220,14 +1204,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getContentType();
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         JSONObject schema = null;
         schema = (JSONObject) result[0];
 //        assertTrue(schema !=  null);
@@ -1251,14 +1235,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getContentType();
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         JSONObject schema = null;
         schema = (JSONObject) result[0];
         //assertTrue(schema !=  null);
@@ -1283,14 +1267,14 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getContentType();
-                    latch.countDown();
+
                 } else {
                     result[0] = error.getErrorCode();
-                    latch.countDown();
+
                 }
             }
         });
-        latch.await();
+
         JSONObject schema = null;
         schema = (JSONObject) result[0];
         //assertTrue(schema !=  null);

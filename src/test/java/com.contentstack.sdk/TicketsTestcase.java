@@ -3,6 +3,8 @@ package com.contentstack.sdk;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
+import static org.junit.Assert.assertEquals;
+
 public class TicketsTestcase extends JUnitCore {
 
 
@@ -25,13 +27,18 @@ public class TicketsTestcase extends JUnitCore {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryResult, Error error) {
 
+                int itemValidation = 0;
                 if (error == null) {
                     for (Entry entry: queryResult.getResultObjects()) {
-                        System.out.println("Title: " + entry.getString("title"));
+                        System.out.println("title: " + entry.getString("title"));
+                        itemValidation = 200;
                     }
                 } else {
-                    System.out.println("Failed: " + error.getErrorMessage() + " " + error.getErrorCode());
+                    itemValidation = 0;
+                    System.out.println("failed: " + error.getErrorMessage() + " " + error.getErrorCode());
                 }
+
+                assertEquals(200, itemValidation);
             }
         });
     }
