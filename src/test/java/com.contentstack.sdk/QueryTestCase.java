@@ -31,7 +31,7 @@ public class QueryTestCase  extends JUnitCore {
 
     public QueryTestCase() throws Exception {
         Config config = new Config();
-        config.setHost("api.contentstack.io");
+        config.setHost("cdn.contentstack.io");
         stack = Contentstack.stack( DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
         containArray = new String[]{"Roti Maker", "kids dress"};
     }

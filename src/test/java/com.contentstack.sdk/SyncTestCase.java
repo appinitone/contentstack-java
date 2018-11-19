@@ -25,7 +25,9 @@ public class SyncTestCase {
 
 
     public SyncTestCase() throws Exception {
-        stack = Contentstack.stack(prod_api_key, prod_delivery_Token, environment);
+        Config config = new Config();
+        config.setHost("cdn.contentstack.io");
+        stack = Contentstack.stack(prod_api_key, prod_delivery_Token, environment, config);
     }
 
 

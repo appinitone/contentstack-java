@@ -29,7 +29,7 @@ public class EntryTestCase extends JUnitCore {
 
     public EntryTestCase() throws Exception{
         Config config = new Config();
-        config.setHost("api.contentstack.io");
+        config.setHost("cdn.contentstack.io");
         stack = Contentstack.stack( DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV,config);
         uidArray = new String[]{"blte88d9bec040e7c7c", "bltdf783472903c3e21"};
         latch = new CountDownLatch(1);

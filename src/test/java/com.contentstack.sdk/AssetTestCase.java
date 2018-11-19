@@ -26,7 +26,7 @@ public class AssetTestCase extends JUnitCore {
 
     public  AssetTestCase() throws Exception {
         Config config = new Config();
-        config.setHost("api.contentstack.io");
+        config.setHost("cdn.contentstack.io");
         stack = Contentstack.stack( DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
         latch = new CountDownLatch(1);
     }
