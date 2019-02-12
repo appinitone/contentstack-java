@@ -33,10 +33,8 @@ public class AssetTestCase extends JUnitCore {
 
 
 
-
-
     @Test
-    public void test01_Asset_getAsset() throws InterruptedException {
+    public void test01_Asset_getAsset() {
 
         Entry entry = stack.contentType("multifield").entry("blt1b1cb4f26c4b682e");
         entry.fetch(new EntryResultCallBack() {
@@ -78,7 +76,7 @@ public class AssetTestCase extends JUnitCore {
 
 
     @Test
-    public void test02_Asset_getAssets() throws InterruptedException{
+    public void test02_Asset_getAssets() {
 
         final Entry entry = stack.contentType("multifield").entry("blt1b1cb4f26c4b682e");
 
@@ -172,7 +170,7 @@ public class AssetTestCase extends JUnitCore {
 
 
     @Test
-    public void test04_AssetLibrary_fetch()  throws  InterruptedException {
+    public void test04_AssetLibrary_fetch()   {
         final AssetLibrary assetLibrary = stack.assetLibrary();
         assetLibrary.fetchAll(new FetchAssetsCallback() {
             @Override
@@ -216,7 +214,7 @@ public class AssetTestCase extends JUnitCore {
 
 
     @Test
-    public void test05_AssetLibrary_includeCount_fetch() throws InterruptedException{
+    public void test05_AssetLibrary_includeCount_fetch() {
 
         final AssetLibrary assetLibrary = stack.assetLibrary();
         assetLibrary.includeCount();
@@ -315,7 +313,7 @@ public class AssetTestCase extends JUnitCore {
 
 
     @Test
-    public void test_14_StackGetParams() throws InterruptedException {
+    public void test_14_StackGetParams() {
         final Object result[] = new Object[2];
         final Asset asset = stack.asset("blt5312f71416d6e2c8");
         asset.addParam("key", "some_value");
