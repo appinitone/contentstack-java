@@ -1,6 +1,6 @@
 package com.contentstack.sdk;
 
-import com.contentstack.sdk.Utility.CSAppUtils;
+import com.contentstack.sdk.utility.CSAppUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+
 import static junit.framework.TestCase.assertTrue;
 
 /**

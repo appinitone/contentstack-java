@@ -1,28 +1,22 @@
 package com.contentstack.sdk;
 
-import com.contentstack.sdk.*;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+
 
 /**
  * Created by Shailesh Mishra on 12/10/17.
  */
 public class AssetTestCase extends JUnitCore {
 
-
-    /* static api key and access token */
     private static final String TAG = "AssetTestCase";
     public static final String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
     public static final String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
     public static final String DEFAULT_ENV = "env1";
-
     private CountDownLatch latch;
     private Stack stack;
-    private String[] containArray;
-    private ArrayList<Entry> entries = null;
 
     public  AssetTestCase() throws Exception {
         Config config = new Config();
@@ -44,6 +38,8 @@ public class AssetTestCase extends JUnitCore {
                 if (error == null) {
                     printLog( "----------Test--Asset-01--Success---------" + entry.toJSON());
                     Asset asset = entry.getAsset("imagefile");
+
+
                     printLog( "----------Test--Asset-01--Success---------" + asset.toJSON());
                     printLog( "----------Test--Asset-01--Success---------" + asset.getFileType());
                     printLog( "----------Test--Asset-01--Success---------" + asset.getCreatedBy());
@@ -57,7 +53,7 @@ public class AssetTestCase extends JUnitCore {
 
                     latch.countDown();
                 } else {
-                    latch.countDown();
+                    //latch.countDown();
                     printLog( "----------Test--Asset--01--Error---------" + error.getErrorMessage());
                     printLog( "----------Test--Asset--01--Error---------" + error.getErrorCode());
                     printLog( "----------Test--Asset--01--Error---------" + error.getErrors());
@@ -79,16 +75,13 @@ public class AssetTestCase extends JUnitCore {
     public void test02_Asset_getAssets() {
 
         final Entry entry = stack.contentType("multifield").entry("blt1b1cb4f26c4b682e");
-
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
 
                 if (error == null) {
                     printLog( "----------Test--ENTRY-02--Success---------" + entry.toJSON());
-
                     List<Asset> assets = entry.getAssets("file");
-
                     for (int i = 0; i < assets.size(); i++) {
                         Asset asset = assets.get(i);
 
@@ -134,7 +127,6 @@ public class AssetTestCase extends JUnitCore {
             public void onCompletion(ResponseType responseType, Error error) {
 
                 if(error == null){
-
                     System.out.println( "----------Test--Asset-03--Success---------" + asset.toJSON());
                     System.out.println( "----------Test--Asset-03--Success---------" + asset.getFileType());
                     System.out.println( "----------Test--Asset-03--Success---------" + asset.getCreatedBy());
