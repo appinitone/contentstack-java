@@ -53,7 +53,7 @@ public class AssetTestCase extends JUnitCore {
 
                     latch.countDown();
                 } else {
-                    //latch.countDown();
+                    latch.countDown();
                     printLog( "----------Test--Asset--01--Error---------" + error.getErrorMessage());
                     printLog( "----------Test--Asset--01--Error---------" + error.getErrorCode());
                     printLog( "----------Test--Asset--01--Error---------" + error.getErrors());
