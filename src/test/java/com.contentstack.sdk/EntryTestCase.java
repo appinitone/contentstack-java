@@ -1,36 +1,29 @@
 package com.contentstack.sdk;
 
-import com.contentstack.sdk.*;
-import com.contentstack.sdk.Error;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
-
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
-
 import static junit.framework.TestCase.assertTrue;
 
-/**
- * Created by Shailesh Mishra on 22/8/16.
- */
+
 public class EntryTestCase extends JUnitCore {
 
-    private static final String TAG = "EntryTestcase";
-    public static final String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
-    public static final String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
-    public static final String DEFAULT_ENV = "env1";
-
-    CountDownLatch latch;
-    Stack stack;
-    String[] uidArray;
+    private CountDownLatch latch;
+    private Stack stack;
+    private String[] uidArray;
 
     public EntryTestCase() throws Exception{
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
-        stack = Contentstack.stack( DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV,config);
+        String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
+        String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
+        String DEFAULT_ENV = "env1";
+        stack = Contentstack.stack(DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV,config);
         uidArray = new String[]{"blte88d9bec040e7c7c", "bltdf783472903c3e21"};
         latch = new CountDownLatch(1);
 
@@ -111,6 +104,7 @@ public class EntryTestCase extends JUnitCore {
         });
         latch.await();
         JSONArray categoryArray = (JSONArray) entry.getJSONArray("category");
+
         try {
 
             if (categoryArray != null){

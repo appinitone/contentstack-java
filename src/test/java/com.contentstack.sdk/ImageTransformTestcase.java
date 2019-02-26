@@ -1,31 +1,26 @@
 package com.contentstack.sdk;
 
-import com.contentstack.sdk.Config;
-import com.contentstack.sdk.Contentstack;
-import com.contentstack.sdk.Stack;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
-
 import java.util.LinkedHashMap;
 import java.util.concurrent.CountDownLatch;
 
-public class ImageTransformTestcase extends JUnitCore {
 
-    private static final String TAG = "AssetTestCase";
-    public static final String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
-    public static final String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
-    public static final String DEFAULT_ENV = "env1";
+public class ImageTransformTestcase extends JUnitCore {
 
     private CountDownLatch latch;
     private Stack stack;
-    private LinkedHashMap imageParams = new LinkedHashMap();
+    private LinkedHashMap<String, Object> imageParams = new LinkedHashMap<String, Object>();
     private final String IMAGE_URL = "https://images.contentstack.io/v3/assets/blt903007d63561dea2/blt638399801b6bd23c/59afa6406c11eb860ddf04aa/download";
 
 
     public ImageTransformTestcase() throws Exception {
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
-        stack = Contentstack.stack( DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
+        String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
+        String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
+        String DEFAULT_ENV = "env1";
+        stack = Contentstack.stack(DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
         latch = new CountDownLatch(1);
     }
 
