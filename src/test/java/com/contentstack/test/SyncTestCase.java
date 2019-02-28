@@ -1,12 +1,16 @@
-package com.contentstack.sdk;
+package com.contentstack.test;
 
+import com.contentstack.sdk.Error;
+import com.contentstack.sdk.*;
 import org.json.JSONObject;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class SyncTestCase {

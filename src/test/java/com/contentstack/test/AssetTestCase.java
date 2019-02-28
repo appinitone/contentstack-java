@@ -1,10 +1,12 @@
-package com.contentstack.sdk;
+package com.contentstack.test;
 
+import com.contentstack.sdk.Error;
+import com.contentstack.sdk.*;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
+
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-
 
 
 public class AssetTestCase extends JUnitCore {

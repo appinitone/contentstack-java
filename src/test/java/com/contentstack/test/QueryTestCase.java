@@ -1,15 +1,19 @@
-package com.contentstack.sdk;
+package com.contentstack.test;
 
+import com.contentstack.sdk.Error;
+import com.contentstack.sdk.*;
 import com.contentstack.sdk.utility.CSAppUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import static junit.framework.TestCase.assertTrue;
 
 /**

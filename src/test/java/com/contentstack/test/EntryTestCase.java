@@ -1,13 +1,17 @@
-package com.contentstack.sdk;
+package com.contentstack.test;
 
 
+import com.contentstack.sdk.Error;
+import com.contentstack.sdk.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
+
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
+
 import static junit.framework.TestCase.assertTrue;
 
 

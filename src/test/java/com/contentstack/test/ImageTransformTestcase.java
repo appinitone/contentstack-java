@@ -1,7 +1,11 @@
-package com.contentstack.sdk;
+package com.contentstack.test;
 
+import com.contentstack.sdk.Config;
+import com.contentstack.sdk.Contentstack;
+import com.contentstack.sdk.Stack;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
+
 import java.util.LinkedHashMap;
 import java.util.concurrent.CountDownLatch;
 
