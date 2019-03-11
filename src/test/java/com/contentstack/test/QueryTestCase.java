@@ -45,7 +45,6 @@ public class QueryTestCase  extends JUnitCore {
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
                 }
