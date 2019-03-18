@@ -1,11 +1,13 @@
-package com.contentstack.sdk;
+package com.contentstack.test;
 
+import com.contentstack.sdk.Error;
+import com.contentstack.sdk.*;
 import com.contentstack.sdk.utility.CSAppUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,11 +21,6 @@ import static junit.framework.TestCase.assertTrue;
  */
 public class QueryTestCase  extends JUnitCore {
 
-    private static final String TAG = "QueryTestCase";
-    private static final String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
-    private static final String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
-    private static final String DEFAULT_ENV = "env1";
-
     private Stack stack;
     private String[] containArray;
     private ArrayList<Entry> entries = null;
@@ -32,7 +29,10 @@ public class QueryTestCase  extends JUnitCore {
     public QueryTestCase() throws Exception {
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
-        stack = Contentstack.stack( DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
+        String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
+        String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
+        String DEFAULT_ENV = "env1";
+        stack = Contentstack.stack(DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
         containArray = new String[]{"Roti Maker", "kids dress"};
     }
 
@@ -41,16 +41,12 @@ public class QueryTestCase  extends JUnitCore {
     @Test
     public void test_00_fetchAllEntries() throws InterruptedException {
         Query query = stack.contentType("product").query();
-        final Object result[] = new Object[] { new Object() };
+        final Object[] result = new Object[]{new Object()};
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-
-                } else {
-
                 }
             }
         });
@@ -68,7 +64,7 @@ public class QueryTestCase  extends JUnitCore {
     @Test
     public void test_01_fetchEntriesOfNonExistingContentType() throws InterruptedException {
         Query query = stack.contentType("department").query();
-        final Object result[] = new Object[] { new Object() };
+        final Object[] result = new Object[]{new Object()};
         final String[] s = {null};
         query.find(new QueryResultsCallBack() {
             @Override
@@ -103,7 +99,6 @@ public class QueryTestCase  extends JUnitCore {
     @Test
     public void test_02_fetchSingleEntry() throws InterruptedException,ClassCastException {
         Query query = stack.contentType("categories").query();
-        final Object result[] = new Object[]{new Object()};
         query.where("title","Women");
         query.find(new QueryResultsCallBack() {
             @Override
@@ -114,9 +109,6 @@ public class QueryTestCase  extends JUnitCore {
                     titles.forEach(title->{
                         printLog("title: "+title.getString("title"));
                     });
-
-                } else {
-
                 }
             }
         });
@@ -130,7 +122,7 @@ public class QueryTestCase  extends JUnitCore {
     @Test
     public void test_03_fetchSingleNonExistingEntry()throws InterruptedException,ClassCastException {
         Query query = stack.contentType("categories").query();
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
         query.where("uid","blta3b58d6893d8935b");
         query.find(new QueryResultsCallBack() {
             @Override
@@ -138,9 +130,6 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-
-                } else {
-
                 }
             }
         });
@@ -157,9 +146,9 @@ public class QueryTestCase  extends JUnitCore {
 
 
     @Test
-    public void test_04_fetchEntryWithIncludeReference() throws InterruptedException {
+    public void test_04_fetchEntryWithIncludeReference() {
         Query query = stack.contentType("product").query();
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
         query.includeReference("category");
         query.find(new QueryResultsCallBack() {
             @Override
@@ -167,9 +156,6 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-
-                } else {
-
                 }
             }
         });
@@ -181,7 +167,7 @@ public class QueryTestCase  extends JUnitCore {
 
 
     @Test
-    public void test_05_fetchEntryNotContainedInField() throws InterruptedException {
+    public void test_05_fetchEntryNotContainedInField() {
 
         Query query = stack.contentType("product").query();
         query.notContainedIn("title", containArray);
@@ -215,10 +201,10 @@ public class QueryTestCase  extends JUnitCore {
 
 
     @Test
-    public void test_06_fetchEntryContainedInField() throws InterruptedException {
+    public void test_06_fetchEntryContainedInField() {
 
         Query query = stack.contentType("product").query();
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
         query.containedIn("title", containArray);
         query.find(new QueryResultsCallBack() {
             @Override
@@ -248,10 +234,10 @@ public class QueryTestCase  extends JUnitCore {
 
 
     @Test
-    public void test_07_fetchEntryNotEqualToField() throws InterruptedException, ParseException {
+    public void test_07_fetchEntryNotEqualToField() {
 
         Query query = stack.contentType("product").query();
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
         query.notEqualTo("title", "yellow t shirt");
         query.find(new QueryResultsCallBack() {
             @Override
@@ -273,10 +259,10 @@ public class QueryTestCase  extends JUnitCore {
 
 
     @Test
-    public void test_08_fetchEntryGreaterThanEqualToField() throws InterruptedException, ParseException {
+    public void test_08_fetchEntryGreaterThanEqualToField() {
 
         Query query = stack.contentType("product").query();
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
         query.greaterThanOrEqualTo("price", 90);
         query.find(new QueryResultsCallBack() {
             @Override
@@ -300,7 +286,7 @@ public class QueryTestCase  extends JUnitCore {
     public void test_09_fetchEntryGreaterThanField() throws InterruptedException, ParseException {
 
         Query query = stack.contentType("product").query();
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
         query.greaterThan("price", 90);
         query.find(new QueryResultsCallBack() {
             @Override
@@ -378,7 +364,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query orQuery = ct.query();
 
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         Query query = ct.query();
         query.lessThan("price", 90);
@@ -421,7 +407,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query orQuery = ct.query();
 
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         Query query = ct.query();
         query.lessThan("price", 90);
@@ -461,7 +447,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
 
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.addQuery("limit", "8");
 
@@ -491,7 +477,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
 
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.addQuery("limit", "8");
         query.removeQuery("limit");
@@ -520,7 +506,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.includeSchema();
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -551,7 +537,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.search("dress");
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -580,6 +566,7 @@ public class QueryTestCase  extends JUnitCore {
                         Object value = jsonObject.opt(key);
                         if(value instanceof String && ((String) value).contains("dress")) System.out.println(value);
                     } catch (Exception e) {
+                        String TAG = "QueryTestCase";
                         CSAppUtils.showLog(TAG, "----------------setQueryJson"+e.toString());
                     }
                 }
@@ -599,7 +586,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.ascending("title");
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -653,7 +640,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.descending("title");
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -686,7 +673,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.limit(3);
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -719,7 +706,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.skip(3);
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -749,7 +736,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.only(new String[]{"price"});
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -785,7 +772,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.except(new String[]{"price"});
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -811,7 +798,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.count();
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -838,7 +825,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.regex("title", "lap*", "i");
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -865,7 +852,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.exists("title");
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -892,7 +879,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.notExists("price1");
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -920,7 +907,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.tags(new String[]{"pink"});
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -945,7 +932,7 @@ public class QueryTestCase  extends JUnitCore {
 
         Query query = stack.contentType("product").query();
         query.language(Language.ENGLISH_UNITED_KINGDOM);
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
@@ -971,7 +958,7 @@ public class QueryTestCase  extends JUnitCore {
         Query query = ct.query();
         query.includeCount();
         query.where("uid","blt3976eac6d3a0cb74");
-        final Object result[] = new Object[2];
+        final Object[] result = new Object[2];
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -994,7 +981,7 @@ public class QueryTestCase  extends JUnitCore {
 
     @Test
     public void test_35_includeReferenceOnly_fetch() throws InterruptedException {
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
         final Query query = stack.contentType("multifield").query();
         query.where("uid", "blt1b1cb4f26c4b682e");
 
@@ -1030,7 +1017,7 @@ public class QueryTestCase  extends JUnitCore {
 
     @Test
     public void test_36_includeReferenceExcept_fetch() throws InterruptedException {
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
         final Query query = stack.contentType("product").query().where("uid", "blt7801c5d40cbbe979");
 
         ArrayList<String> strings = new ArrayList<>();
@@ -1062,7 +1049,7 @@ public class QueryTestCase  extends JUnitCore {
         Query query = ct.query();
         query.includeCount();
         query.where("in_stock", true);
-        final Object result[] = new Object[2];
+        final Object[] result = new Object[2];
 
         query.findOne(new SingleQueryResultCallback() {
             @Override
@@ -1077,18 +1064,10 @@ public class QueryTestCase  extends JUnitCore {
             }
         });
 
-        try {
-
-            if (result.length>0){
-                Entry entry = (Entry) result[0];
-                System.out.print(" result :-->"+result.toString());
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (result.length>0){
+            Entry entry = (Entry) result[0];
+            System.out.print(" result :-->"+result.toString());
         }
-
-
 
 
     }
@@ -1100,7 +1079,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType contentType = stack.contentType("product");
 
         Query query = contentType.query();
-        final Object result[] = new Object[] { new Object() };
+        final Object[] result = new Object[]{new Object()};
 
         query.notEqualTo("title", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.*************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.*************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.*************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.*************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.*******");
         query.includeSchema();
@@ -1138,7 +1117,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.includeSchema();
-        final Object result[] = new Object[]{new Object()};
+           final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -1166,7 +1145,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.includeContentType();
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -1196,7 +1175,7 @@ public class QueryTestCase  extends JUnitCore {
         Query query = ct.query();
         query.includeSchema();
         query.includeContentType();
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -1227,7 +1206,7 @@ public class QueryTestCase  extends JUnitCore {
         Query query = ct.query();
         query.includeContentType();
         query.includeSchema();
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
@@ -1259,7 +1238,7 @@ public class QueryTestCase  extends JUnitCore {
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
         query.addParam("someKey", "someObject");
-        final Object result[] = new Object[]{new Object()};
+        final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
             @Override
