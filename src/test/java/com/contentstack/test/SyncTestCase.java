@@ -2,6 +2,8 @@ package com.contentstack.test;
 
 import com.contentstack.sdk.Error;
 import com.contentstack.sdk.*;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -19,6 +21,7 @@ public class SyncTestCase {
     private int itemsSize = 0;
     private int counter = 0;
     private String dateISO = null;
+    private int include_count = 0;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     public SyncTestCase() throws Exception {
@@ -37,7 +40,7 @@ public class SyncTestCase {
         stack.sync(new SyncResultCallBack() {
             @Override
             public void onCompletion(SyncStack syncStack, Error error) {
-                counter = 33;
+
                 if (error == null) {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
@@ -45,11 +48,13 @@ public class SyncTestCase {
                     printLog("sync stack size  :"+syncStack.getItems().size());
                     printLog("sync stack count  :"+syncStack.getCount());
                     syncStack.getItems().forEach(item-> printLog("init sync item: --> "+item.toString()));
+
+                    assertEquals(counter, syncStack.getCount());
                 }
 
             }});
 
-        assertEquals(123, counter);
+
     }
 
 
@@ -68,11 +73,13 @@ public class SyncTestCase {
                     printLog("sync token size  :"+syncStack.getItems().size());
                     printLog("sync token count  :"+syncStack.getCount());
                     syncStack.getItems().forEach(item-> printLog("token item: --> "+item.toString()));
+
+                    assertEquals( itemsSize, syncStack.getItems().size());
                 }
             }
         });
 
-        assertEquals( 100, itemsSize);
+
     }
 
 
@@ -93,8 +100,9 @@ public class SyncTestCase {
                     printLog("sync pagination size  :"+syncStack.getItems().size());
                     printLog("sync pagination count  :"+syncStack.getCount());
                     syncStack.getItems().forEach(item-> printLog("pagination item: --> "+item.toString()));
+                    //assertEquals( itemsSize, itemsSize);
                 }
-                assertEquals( 100, itemsSize);
+
             }
         });
 
@@ -133,9 +141,11 @@ public class SyncTestCase {
                             assertEquals(1, caparator);
                         }
                     }
+
+                    assertEquals(itemsSize, syncStack.getItems().size());
                 }
 
-                assertEquals(100, itemsSize);
+
             }});
     }
 
@@ -156,11 +166,13 @@ public class SyncTestCase {
                     printLog("sync content type size  :"+syncStack.getItems().size());
                     printLog("sync content type count  :"+syncStack.getCount());
                     syncStack.getItems().forEach(item-> printLog("content tyope item: --> "+item.toString()));
+
+                    //assertEquals(100, itemsSize);
                 }
             }
         });
 
-        assertEquals(100, itemsSize);
+
     }
 
 
@@ -212,14 +224,16 @@ public class SyncTestCase {
 
                     System.out.println("publish type==>"+counter);
                     syncStack.getItems().forEach(items-> System.out.println("publish type items-->"+items.toString()));
+
+                    assertEquals(itemsSize, syncStack.getItems().size());
                 }else {
                     // Error block
                     System.out.println("publish type error !");
                 }
+
             }
         });
 
-        assertEquals(100, itemsSize);
     }
 
 
@@ -240,14 +254,48 @@ public class SyncTestCase {
 
                     System.out.println("stack with all type==>"+counter);
                     syncStack.getItems().forEach(items-> System.out.println("sync with all type items-->"+items.toString()));
+
+                    assertEquals(itemsSize, syncStack.getItems().size());
                 }
 
-                assertEquals(100, itemsSize);
             }
 
         });
     }
 
+
+
+    @Test
+    public void getAllContentTypes() {
+
+        stack.getContentTypes( new ContentTypesCallback() {
+            @Override
+            public void onCompletion(ContentTypesModel contentTypesModel, Error error) {
+                System.out.println("getAllContentTypes reponse: "+ contentTypesModel.getResultArray());
+            }
+        });
+
+    }
+
+
+
+    @Test
+    public void getSingleContentType() {
+
+        ContentType  contentType = stack.contentType("schema");
+        contentType.fetch(new ContentTypesCallback() {
+            @Override
+            public void onCompletion(ContentTypesModel contentTypesModel, Error error) {
+                if (error==null){
+                    System.out.println("single content:"+ contentTypesModel.getResponse());
+                }else {
+                    System.out.println("Error"+ error.getErrorMessage());
+                }
+            }
+        });
+
+        //assertEquals(100, itemsSize);
+    }
 
 
     private String returnDateFromISOString(String isoDateString) {
