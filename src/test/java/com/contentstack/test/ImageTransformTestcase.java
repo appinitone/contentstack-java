@@ -3,9 +3,11 @@ package com.contentstack.test;
 import com.contentstack.sdk.Config;
 import com.contentstack.sdk.Contentstack;
 import com.contentstack.sdk.Stack;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
-
 import java.util.LinkedHashMap;
 import java.util.concurrent.CountDownLatch;
 
@@ -14,11 +16,15 @@ public class ImageTransformTestcase extends JUnitCore {
 
     private CountDownLatch latch;
     private Stack stack;
+    private Logger logger = LogManager.getLogger(ImageTransformTestcase.class);
     private LinkedHashMap<String, Object> imageParams = new LinkedHashMap<String, Object>();
     private final String IMAGE_URL = "https://images.contentstack.io/v3/assets/blt903007d63561dea2/blt638399801b6bd23c/59afa6406c11eb860ddf04aa/download";
 
 
+    private void initLog() { BasicConfigurator.configure(); }
+
     public ImageTransformTestcase() throws Exception {
+        initLog();
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
         String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
@@ -58,28 +64,28 @@ public class ImageTransformTestcase extends JUnitCore {
             if (imageParams.size()>0){
                 for (int i=0; i<imageParams.size(); i++){
                     String keyValueParis = getAllPairs[i];
-                    System.out.println( "pairs:--> "+keyValueParis);
+                    logger.debug( "pairs:--> "+keyValueParis);
                     ++counter;
                 }
             }
         }else {
-            System.out.println( "Testcases Failed");
+            logger.debug( "Testcases Failed");
             try{
                 latch.await();
             }catch(Exception e){
-                System.out.println("---------------||"+e.toString());
+                logger.debug("---------------||"+e.toString());
             }
         }
 
         if (counter==imageParams.size()){
             latch.countDown();
-            System.out.println( "Testcases Passed");
+            logger.debug( "Testcases Passed");
         }else {
-            System.out.println( "Testcases Failed");
+            logger.debug( "Testcases Failed");
             try{
                 latch.await();
             }catch(Exception e){
-                System.out.println("---------------||"+e.toString());
+                logger.debug("---------------||"+e.toString());
             }
         }
     }
@@ -110,28 +116,28 @@ public class ImageTransformTestcase extends JUnitCore {
             if (imageParams.size()>0){
                 for (int i=0; i<imageParams.size(); i++){
                     String keyValueParis = getAllPairs[i];
-                    System.out.println( "pairs:--> "+keyValueParis);
+                    logger.debug( "pairs:--> "+keyValueParis);
                     ++counter;
                 }
             }
         }else {
-            System.out.println( "Testcases Failed");
+            logger.debug( "Testcases Failed");
             try{
                 latch.await();
             }catch(Exception e){
-                System.out.println("---------------||"+e.toString());
+                logger.debug("---------------||"+e.toString());
             }
         }
 
         if (counter==imageParams.size()){
             latch.countDown();
-            System.out.println( "Testcases Passed");
+            logger.debug( "Testcases Passed");
         }else {
-            System.out.println( "Testcases Failed");
+            logger.debug( "Testcases Failed");
             try{
                 latch.await();
             }catch(Exception e){
-                System.out.println("---------------||"+e.toString());
+                logger.debug("---------------||"+e.toString());
             }
         }
     }
@@ -165,28 +171,28 @@ public class ImageTransformTestcase extends JUnitCore {
             if (imageParams.size()>0){
                 for (int i=0; i<imageParams.size(); i++){
                     String keyValueParis = getAllPairs[i];
-                    System.out.println( "pairs:--> "+keyValueParis);
+                    logger.debug( "pairs:--> "+keyValueParis);
                     ++counter;
                 }
             }
         }else {
-            System.out.println( "Testcases Failed");
+            logger.debug( "Testcases Failed");
             try{
                 latch.await();
             }catch(Exception e){
-                System.out.println("---------------||"+e.toString());
+                logger.debug("---------------||"+e.toString());
             }
         }
 
         if (counter==imageParams.size()){
             latch.countDown();
-            System.out.println( "Testcases Passed");
+            logger.debug( "Testcases Passed");
         }else {
-            System.out.println( "Testcases Failed");
+            logger.debug( "Testcases Failed");
             try{
                 latch.await();
             }catch(Exception e){
-                System.out.println("---------------||"+e.toString());
+                logger.debug("---------------||"+e.toString());
             }
         }
     }
@@ -214,28 +220,28 @@ public class ImageTransformTestcase extends JUnitCore {
             if (imageParams.size()>0){
                 for (int i=0; i<imageParams.size(); i++){
                     String keyValueParis = getAllPairs[i];
-                    System.out.println( "pairs:--> "+keyValueParis);
+                    logger.debug( "pairs:--> "+keyValueParis);
                     ++counter;
                 }
             }
         }else {
-            System.out.println( "Testcases Failed");
+            logger.debug( "Testcases Failed");
             try{
                 latch.await();
             }catch(Exception e){
-                System.out.println("---------------||"+e.toString());
+                logger.debug("---------------||"+e.toString());
             }
         }
 
         if (counter==imageParams.size()){
             latch.countDown();
-            System.out.println( "Testcases Passed");
+            logger.debug( "Testcases Passed");
         }else {
-            System.out.println( "Testcases Failed");
+            logger.debug( "Testcases Failed");
             try{
                 latch.await();
             }catch(Exception e){
-                System.out.println("---------------||"+e.toString());
+                logger.debug("---------------||"+e.toString());
             }
         }
     }

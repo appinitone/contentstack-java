@@ -2,9 +2,12 @@ package com.contentstack.test;
 
 import com.contentstack.sdk.Error;
 import com.contentstack.sdk.*;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
-
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -13,9 +16,16 @@ public class AssetTestCase extends JUnitCore {
 
     private CountDownLatch latch;
     private Stack stack;
+    Logger logger = LogManager.getLogger(AssetTestCase.class);
 
+    private void initLog() { BasicConfigurator.configure(); }
 
-    public  AssetTestCase() throws Exception {
+    public AssetTestCase() {
+        initLog();
+    }
+
+    @Before
+    public void setUp() throws Exception {
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
         String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
@@ -23,9 +33,8 @@ public class AssetTestCase extends JUnitCore {
         String DEFAULT_ENV = "env1";
         stack = Contentstack.stack(DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
         latch = new CountDownLatch(1);
+
     }
-
-
 
     @Test
     public void test01_Asset_getAsset() {
@@ -36,26 +45,26 @@ public class AssetTestCase extends JUnitCore {
             public void onCompletion(ResponseType responseType, Error error) {
 
                 if (error == null) {
-                    printLog( "----------Test--Asset-01--Success---------" + entry.toJSON());
+                    logger.debug( "----------Test--Asset-01--Success---------" + entry.toJSON());
                     Asset asset = entry.getAsset("imagefile");
 
-                    printLog( "----------Test--Asset-01--Success---------" + asset.toJSON());
-                    printLog( "----------Test--Asset-01--Success---------" + asset.getFileType());
-                    printLog( "----------Test--Asset-01--Success---------" + asset.getCreatedBy());
-                    printLog( "----------Test--Asset-01--Success---------" + asset.getUpdatedBy());
-                    printLog( "----------Test--Asset-01--Success---------" + asset.getFileName());
-                    printLog( "----------Test--Asset-01--Success---------" + asset.getFileSize());
-                    printLog( "----------Test--Asset-01--Success---------" + asset.getAssetUid());
-                    printLog( "----------Test--Asset-01--Success---------" + asset.getUrl());
-                    printLog( "----------Test--Asset-01--Success---------" + asset.getCreateAt().getTime());
-                    printLog( "----------Test--Asset-01--Success---------" + asset.getUpdateAt().getTime());
+                    logger.debug("----------Test--Asset-01--Success---------" + asset.toJSON());
+                    logger.debug( "----------Test--Asset-01--Success---------" + asset.getFileType());
+                    logger.debug( "----------Test--Asset-01--Success---------" + asset.getCreatedBy());
+                    logger.debug( "----------Test--Asset-01--Success---------" + asset.getUpdatedBy());
+                    logger.debug( "----------Test--Asset-01--Success---------" + asset.getFileName());
+                    logger.debug( "----------Test--Asset-01--Success---------" + asset.getFileSize());
+                    logger.debug( "----------Test--Asset-01--Success---------" + asset.getAssetUid());
+                    logger.debug( "----------Test--Asset-01--Success---------" + asset.getUrl());
+                    logger.debug( "----------Test--Asset-01--Success---------" + asset.getCreateAt().getTime());
+                    logger.debug( "----------Test--Asset-01--Success---------" + asset.getUpdateAt().getTime());
 
                     latch.countDown();
                 } else {
                     latch.countDown();
-                    printLog( "----------Test--Asset--01--Error---------" + error.getErrorMessage());
-                    printLog( "----------Test--Asset--01--Error---------" + error.getErrorCode());
-                    printLog( "----------Test--Asset--01--Error---------" + error.getErrors());
+                    logger.debug( "----------Test--Asset--01--Error---------" + error.getErrorMessage());
+                    logger.debug( "----------Test--Asset--01--Error---------" + error.getErrorCode());
+                    logger.debug( "----------Test--Asset--01--Error---------" + error.getErrors());
                 }
 
             }
@@ -64,7 +73,7 @@ public class AssetTestCase extends JUnitCore {
         try{
             latch.await();
         }catch(Exception e){
-            System.out.println("---------------||"+e.toString());
+            logger.debug("---------------||"+e.toString());
         }
 
     }
@@ -79,30 +88,30 @@ public class AssetTestCase extends JUnitCore {
             public void onCompletion(ResponseType responseType, Error error) {
 
                 if (error == null) {
-                    printLog( "----------Test--ENTRY-02--Success---------" + entry.toJSON());
+                    logger.debug( "----------Test--ENTRY-02--Success---------" + entry.toJSON());
                     List<Asset> assets = entry.getAssets("file");
                     for (int i = 0; i < assets.size(); i++) {
                         Asset asset = assets.get(i);
 
-                        printLog( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.toJSON());
-                        printLog( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getFileType());
-                        printLog( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getCreatedBy());
-                        printLog( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getUpdatedBy());
-                        printLog( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getFileName());
-                        printLog( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getFileSize());
-                        printLog( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getAssetUid());
-                        printLog( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getUrl());
-                        printLog( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getCreateAt().getTime());
-                        printLog( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getUpdateAt().getTime());
+                        logger.debug( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.toJSON());
+                        logger.debug( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getFileType());
+                        logger.debug( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getCreatedBy());
+                        logger.debug( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getUpdatedBy());
+                        logger.debug( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getFileName());
+                        logger.debug( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getFileSize());
+                        logger.debug( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getAssetUid());
+                        logger.debug( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getUrl());
+                        logger.debug( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getCreateAt().getTime());
+                        logger.debug( "----------Test--Asset-02--Success---------" + i +" ---- " + asset.getUpdateAt().getTime());
 
                     }
 
                     latch.countDown();
                 } else {
                     latch.countDown();
-                    printLog( "----------Test--Asset--02--Error---------" + error.getErrorMessage());
-                    printLog( "----------Test--Asset--02--Error---------" + error.getErrorCode());
-                    printLog( "----------Test--Asset--02--Error---------" + error.getErrors());
+                    logger.debug( "----------Test--Asset--02--Error---------" + error.getErrorMessage());
+                    logger.debug( "----------Test--Asset--02--Error---------" + error.getErrorCode());
+                    logger.debug( "----------Test--Asset--02--Error---------" + error.getErrors());
                 }
 
             }
@@ -112,7 +121,7 @@ public class AssetTestCase extends JUnitCore {
             latch.await();
 
         }catch(Exception e){
-            System.out.println("---------------||"+e.toString());
+            logger.debug("---------------||"+e.toString());
         }
     }
 
@@ -126,24 +135,24 @@ public class AssetTestCase extends JUnitCore {
             public void onCompletion(ResponseType responseType, Error error) {
 
                 if(error == null){
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.toJSON());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getFileType());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getCreatedBy());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getUpdatedBy());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getFileName());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getFileSize());
-                    System.out.println("----------Test--Asset-03--Success---------" + asset.getAssetUid());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getUrl());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getCreateAt().getTime());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getUpdateAt().getTime());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.toJSON());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getFileType());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getCreatedBy());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getUpdatedBy());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getFileName());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getFileSize());
+                    logger.debug("----------Test--Asset-03--Success---------" + asset.getAssetUid());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getUrl());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getCreateAt().getTime());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getUpdateAt().getTime());
                     result[0] = asset;
                     latch.countDown();
                 }else {
                     latch.countDown();
                     result[0] = error;
-                    System.out.println( "----------Test--Asset--03--Error---------" + error.getErrorMessage());
-                    System.out.println("----------Test--Asset--03--Error---------" + error.getErrorCode());
-                    System.out.println( "----------Test--Asset--03--Error---------" + error.getErrors());
+                    logger.debug( "----------Test--Asset--03--Error---------" + error.getErrorMessage());
+                    logger.debug("----------Test--Asset--03--Error---------" + error.getErrorCode());
+                    logger.debug( "----------Test--Asset--03--Error---------" + error.getErrors());
                     latch.countDown();
                 }
 
@@ -154,7 +163,7 @@ public class AssetTestCase extends JUnitCore {
             latch.await();
             //assertEquals(true, result[0] instanceof Asset);
         }catch(Exception e){
-            System.out.println("---------------||"+e.toString());
+            logger.debug("---------------||"+e.toString());
         }
     }
 
@@ -172,25 +181,25 @@ public class AssetTestCase extends JUnitCore {
                     for (int i = 0; i < assets.size(); i++) {
                         Asset asset = assets.get(i);
 
-                        printLog( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.toJSON());
-                        printLog( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getFileType());
-                        printLog( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getCreatedBy());
-                        printLog( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getUpdatedBy());
-                        printLog( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getFileName());
-                        printLog( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getFileSize());
-                        printLog( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getAssetUid());
-                        printLog( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getUrl());
-                        printLog( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getCreateAt().getTime());
-                        printLog( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getUpdateAt().getTime());
+                        logger.debug( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.toJSON());
+                        logger.debug( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getFileType());
+                        logger.debug( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getCreatedBy());
+                        logger.debug( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getUpdatedBy());
+                        logger.debug( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getFileName());
+                        logger.debug( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getFileSize());
+                        logger.debug( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getAssetUid());
+                        logger.debug( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getUrl());
+                        logger.debug( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getCreateAt().getTime());
+                        logger.debug( "----------Test--Asset-04--Success---------" + i +" ---- " + asset.getUpdateAt().getTime());
                     }
 
                     latch.countDown();
 
                 } else {
                     latch.countDown();
-                    printLog( "----------Test--Asset--04--Error---------" + error.getErrorMessage());
-                    printLog( "----------Test--Asset--04--Error---------" + error.getErrorCode());
-                    printLog( "----------Test--Asset--04--Error---------" + error.getErrors());
+                    logger.debug( "----------Test--Asset--04--Error---------" + error.getErrorMessage());
+                    logger.debug( "----------Test--Asset--04--Error---------" + error.getErrorCode());
+                    logger.debug( "----------Test--Asset--04--Error---------" + error.getErrors());
 
                 }
             }
@@ -199,7 +208,7 @@ public class AssetTestCase extends JUnitCore {
         try{
             latch.await();
         }catch(Exception e){
-            System.out.println("---------------||"+e.toString());
+            logger.debug("---------------||"+e.toString());
         }
     }
 
@@ -215,30 +224,30 @@ public class AssetTestCase extends JUnitCore {
 
                 if (error == null) {
 
-                    System.out.println("count = [" + assetLibrary.getCount() + "]");
+                    logger.debug("count = [" + assetLibrary.getCount() + "]");
 
                     for (int i = 0; i < assets.size(); i++) {
                         Asset asset = assets.get(i);
 
-                        printLog( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.toJSON());
-                        printLog( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getFileType());
-                        printLog( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getCreatedBy());
-                        printLog( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getUpdatedBy());
-                        printLog( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getFileName());
-                        printLog( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getFileSize());
-                        printLog( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getAssetUid());
-                        printLog( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getUrl());
-                        printLog( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getCreateAt().getTime());
-                        printLog( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getUpdateAt().getTime());
+                        logger.debug( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.toJSON());
+                        logger.debug( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getFileType());
+                        logger.debug( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getCreatedBy());
+                        logger.debug( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getUpdatedBy());
+                        logger.debug( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getFileName());
+                        logger.debug( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getFileSize());
+                        logger.debug( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getAssetUid());
+                        logger.debug( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getUrl());
+                        logger.debug( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getCreateAt().getTime());
+                        logger.debug( "----------Test--Asset-05--Success---------" + i +" ---- " + asset.getUpdateAt().getTime());
 
                     }
 
                     latch.countDown();
                 } else {
                     latch.countDown();
-                    printLog( "----------Test--Asset--05--Error---------" + error.getErrorMessage());
-                    printLog( "----------Test--Asset--05--Error---------" + error.getErrorCode());
-                    printLog( "----------Test--Asset--05--Error---------" + error.getErrors());
+                    logger.debug( "----------Test--Asset--05--Error---------" + error.getErrorMessage());
+                    logger.debug( "----------Test--Asset--05--Error---------" + error.getErrorCode());
+                    logger.debug( "----------Test--Asset--05--Error---------" + error.getErrors());
                 }
 
             }
@@ -247,7 +256,7 @@ public class AssetTestCase extends JUnitCore {
         try{
             latch.await();
         }catch(Exception e){
-            System.out.println("---------------||"+e.toString());
+            logger.debug("---------------||"+e.toString());
         }
     }
 
@@ -261,31 +270,31 @@ public class AssetTestCase extends JUnitCore {
             @Override
             public void onCompletion(ResponseType responseType, List<Asset> assets, Error error) {
 
-                System.out.println( "----------Test--Asset-06--Success---------");
+                logger.debug( "----------Test--Asset-06--Success---------");
                 if (error == null) {
 
                     for (int i = 0; i < assets.size(); i++) {
                         Asset asset = assets.get(i);
 
-                        System.out.println( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.toJSON());
-                        System.out.println( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getFileType());
-                        System.out.println( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getCreatedBy());
-                        System.out.println( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getUpdatedBy());
-                        System.out.println( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getFileName());
-                        System.out.println( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getFileSize());
-                        System.out.println( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getAssetUid());
-                        System.out.println( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getUrl());
-                        System.out.println( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getCreateAt().getTime());
-                        System.out.println( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getUpdateAt().getTime());
+                        logger.debug( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.toJSON());
+                        logger.debug( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getFileType());
+                        logger.debug( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getCreatedBy());
+                        logger.debug( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getUpdatedBy());
+                        logger.debug( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getFileName());
+                        logger.debug( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getFileSize());
+                        logger.debug( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getAssetUid());
+                        logger.debug( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getUrl());
+                        logger.debug( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getCreateAt().getTime());
+                        logger.debug( "----------Test--Asset-06--Success---------" + i +" ---- " + asset.getUpdateAt().getTime());
 
                     }
 
                     latch.countDown();
                 } else {
                     latch.countDown();
-                    System.out.println( "----------Test--Asset--05--Error---------" + error.getErrorMessage());
-                    System.out.println( "----------Test--Asset--05--Error---------" + error.getErrorCode());
-                    System.out.println( "----------Test--Asset--05--Error---------" + error.getErrors());
+                    logger.debug( "----------Test--Asset--05--Error---------" + error.getErrorMessage());
+                    logger.debug( "----------Test--Asset--05--Error---------" + error.getErrorCode());
+                    logger.debug( "----------Test--Asset--05--Error---------" + error.getErrors());
                 }
 
             }
@@ -294,7 +303,7 @@ public class AssetTestCase extends JUnitCore {
         try{
             latch.await();
         }catch(Exception e){
-            System.out.println("---------------||"+e.toString());
+            logger.debug("---------------||"+e.toString());
         }
     }
 
@@ -315,24 +324,24 @@ public class AssetTestCase extends JUnitCore {
 
                 if(error == null){
 
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.toJSON());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getFileType());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getCreatedBy());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getUpdatedBy());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getFileName());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getFileSize());
-                    System.out.println("-----------Test--Asset-03--Success---------" + asset.getAssetUid());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getUrl());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getCreateAt().getTime());
-                    System.out.println( "----------Test--Asset-03--Success---------" + asset.getUpdateAt().getTime());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.toJSON());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getFileType());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getCreatedBy());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getUpdatedBy());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getFileName());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getFileSize());
+                    logger.debug("-----------Test--Asset-03--Success---------" + asset.getAssetUid());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getUrl());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getCreateAt().getTime());
+                    logger.debug( "----------Test--Asset-03--Success---------" + asset.getUpdateAt().getTime());
                     result[0] = asset;
                     latch.countDown();
                 }else {
 
                     result[0] = error;
-                    System.out.println( "----------Test--Asset--03--Error---------" + error.getErrorMessage());
-                    System.out.println("----------Test--Asset--03--Error---------" + error.getErrorCode());
-                    System.out.println( "----------Test--Asset--03--Error---------" + error.getErrors());
+                    logger.debug( "----------Test--Asset--03--Error---------" + error.getErrorMessage());
+                    logger.debug("----------Test--Asset--03--Error---------" + error.getErrorCode());
+                    logger.debug( "----------Test--Asset--03--Error---------" + error.getErrors());
                     latch.countDown();
                 }
 
@@ -340,13 +349,6 @@ public class AssetTestCase extends JUnitCore {
         });
 
     }
-
-
-    private void printLog( String logMessage){
-        System.out.println(logMessage);
-    }
-
-
 
 
 }

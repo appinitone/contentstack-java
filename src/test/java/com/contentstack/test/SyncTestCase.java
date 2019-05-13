@@ -2,16 +2,15 @@ package com.contentstack.test;
 
 import com.contentstack.sdk.Error;
 import com.contentstack.sdk.*;
-import org.json.JSONArray;
-import org.json.JSONException;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.junit.Test;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import static org.junit.Assert.assertEquals;
 
 
@@ -22,9 +21,14 @@ public class SyncTestCase {
     private int counter = 0;
     private String dateISO = null;
     private int include_count = 0;
+    private final Logger logger = LogManager.getLogger(SyncTestCase.class);
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private void initLog() { BasicConfigurator.configure(); }
+
     public SyncTestCase() throws Exception {
+
+        initLog();
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
         String prod_api_key = "blt477ba55f9a67bcdf";
@@ -45,9 +49,9 @@ public class SyncTestCase {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
 
-                    printLog("sync stack size  :"+syncStack.getItems().size());
-                    printLog("sync stack count  :"+syncStack.getCount());
-                    syncStack.getItems().forEach(item-> printLog("init sync item: --> "+item.toString()));
+                    logger.debug( "sync stack size  :"+syncStack.getItems().size());
+                    logger.debug("sync stack count  :"+syncStack.getCount());
+                    syncStack.getItems().forEach(item-> logger.debug(  item.toString()));
 
                     assertEquals(counter, syncStack.getCount());
                 }
@@ -70,10 +74,9 @@ public class SyncTestCase {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
 
-                    printLog("sync token size  :"+syncStack.getItems().size());
-                    printLog("sync token count  :"+syncStack.getCount());
-                    syncStack.getItems().forEach(item-> printLog("token item: --> "+item.toString()));
-
+                    logger.debug("sync token size  :"+syncStack.getItems().size());
+                    logger.debug("sync token count  :"+syncStack.getCount());
+                    syncStack.getItems().forEach(item-> logger.debug( "sync token result"+item.toString()));
                     assertEquals( itemsSize, syncStack.getItems().size());
                 }
             }
@@ -97,9 +100,9 @@ public class SyncTestCase {
                     itemsSize += syncStack.getItems().size();
                     counter = syncStack.getCount();
 
-                    printLog("sync pagination size  :"+syncStack.getItems().size());
-                    printLog("sync pagination count  :"+syncStack.getCount());
-                    syncStack.getItems().forEach(item-> printLog("pagination item: --> "+item.toString()));
+                    logger.debug("sync pagination size  :"+syncStack.getItems().size());
+                    logger.debug("sync pagination count  :"+syncStack.getCount());
+                    syncStack.getItems().forEach(item-> logger.debug( "Pagination"+item.toString()));
                     //assertEquals( itemsSize, itemsSize);
                 }
 
@@ -127,7 +130,7 @@ public class SyncTestCase {
                         if (jsonObject1.has("event_at")) {
 
                             dateISO = jsonObject1.optString("event_at");
-                            System.out.println("date iso -->"+dateISO);
+                            logger.debug( "date iso -->"+dateISO);
                             String serverDate = returnDateFromISOString(dateISO);
                             Date dateServer = null;
                             try {
@@ -135,7 +138,7 @@ public class SyncTestCase {
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-                            System.out.println("dateServer -->"+dateServer);
+                            logger.debug( "dateServer -->"+dateServer);
                             assert dateServer != null;
                             int caparator = dateServer.compareTo(start_date);
                             assertEquals(1, caparator);
@@ -163,9 +166,9 @@ public class SyncTestCase {
                     itemsSize += syncStack.getItems().size();
                     counter = syncStack.getCount();
 
-                    printLog("sync content type size  :"+syncStack.getItems().size());
-                    printLog("sync content type count  :"+syncStack.getCount());
-                    syncStack.getItems().forEach(item-> printLog("content tyope item: --> "+item.toString()));
+                    logger.debug("sync content type size  :"+syncStack.getItems().size());
+                    logger.debug("sync content type count  :"+syncStack.getCount());
+                    syncStack.getItems().forEach(item-> logger.debug( "content type: "+item.toString()));
 
                     //assertEquals(100, itemsSize);
                 }
@@ -192,17 +195,17 @@ public class SyncTestCase {
                         if (object.has("data"))
                             dataObject = object.optJSONObject("data").optString("locale");
                         assert dataObject != null;
-                        printLog("locale dataObject: --> "+ dataObject);
+                        logger.debug("locale dataObject: --> "+ dataObject);
 
                         if (!dataObject.isEmpty()) {
-                            printLog("locale dataObject: --> "+ dataObject);
+                            logger.debug("locale dataObject: --> "+ dataObject);
                             assertEquals("en-us", dataObject);
                         }
                     }
 
-                    printLog("sync stack size  :"+syncStack.getItems().size());
-                    printLog("sync stack count  :"+syncStack.getCount());
-                    syncStack.getItems().forEach(item-> printLog("item: --> "+item.toString()));
+                    logger.debug("sync stack size  :"+syncStack.getItems().size());
+                    logger.debug("sync stack count  :"+syncStack.getCount());
+                    syncStack.getItems().forEach(item-> logger.debug(item.toString()));
                 }
             }
         });
@@ -222,13 +225,13 @@ public class SyncTestCase {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
 
-                    System.out.println("publish type==>"+counter);
-                    syncStack.getItems().forEach(items-> System.out.println("publish type items-->"+items.toString()));
+                    logger.debug( "publish type==>"+counter);
+                    syncStack.getItems().forEach(items-> logger.debug( "publish type"+items.toString()));
 
                     assertEquals(itemsSize, syncStack.getItems().size());
                 }else {
                     // Error block
-                    System.out.println("publish type error !");
+                    logger.debug( "publish type error !");
                 }
 
             }
@@ -252,8 +255,8 @@ public class SyncTestCase {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
 
-                    System.out.println("stack with all type==>"+counter);
-                    syncStack.getItems().forEach(items-> System.out.println("sync with all type items-->"+items.toString()));
+                    logger.debug( "stack with all type==>"+counter);
+                    syncStack.getItems().forEach(items-> logger.debug(  "sync with all type: "+items.toString()));
 
                     assertEquals(itemsSize, syncStack.getItems().size());
                 }
@@ -271,7 +274,7 @@ public class SyncTestCase {
         stack.getContentTypes( new ContentTypesCallback() {
             @Override
             public void onCompletion(ContentTypesModel contentTypesModel, Error error) {
-                System.out.println("getAllContentTypes reponse: "+ contentTypesModel.getResultArray());
+                logger.debug( "getAllContentTypes reponse: "+ contentTypesModel.getResultArray());
             }
         });
 
@@ -287,9 +290,9 @@ public class SyncTestCase {
             @Override
             public void onCompletion(ContentTypesModel contentTypesModel, Error error) {
                 if (error==null){
-                    System.out.println("single content:"+ contentTypesModel.getResponse());
+                    logger.debug( "single content:"+ contentTypesModel.getResponse());
                 }else {
-                    System.out.println("Error"+ error.getErrorMessage());
+                    logger.debug( "Error"+ error.getErrorMessage());
                 }
             }
         });
@@ -303,9 +306,4 @@ public class SyncTestCase {
         return dateFormate[0];
     }
 
-
-
-    private void printLog( String logMessage){
-        System.out.println(logMessage);
-    }
 }
