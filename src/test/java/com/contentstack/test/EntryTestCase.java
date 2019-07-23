@@ -266,5 +266,25 @@ public class EntryTestCase extends JUnitCore {
     }
 
 
+    @Test
+    public void test_10_IncludeReferenceContentTypeUID() throws InterruptedException {
+        final Entry entry = stack.contentType("user").entry("blt3b0aaebf6f1c3762");
+        entry.includeReferenceContentTypeUID();
+        entry.fetch(new EntryResultCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, Error error) {
+
+                if (error == null) {
+                    latch.countDown();
+                } else {
+                    latch.countDown();
+                }
+
+            }
+        });
+        latch.await();
+
+    }
+
 
 }

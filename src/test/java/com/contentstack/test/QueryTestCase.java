@@ -1256,5 +1256,32 @@ public class QueryTestCase  extends JUnitCore {
 
 
 
+    @Test
+    public void test_44_IncludeReferenceContentTypeUID(){
+
+        ContentType ct = stack.contentType("product");
+        Query query = ct.query();
+        query.includeReferenceContentTypUid();
+        final Object[] result = new Object[]{new Object()};
+
+        query.find(new QueryResultsCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
+
+                if (error == null) {
+                    result[0] = queryresult.getContentType();
+
+                } else {
+                    result[0] = error.getErrorCode();
+
+                }
+            }
+        });
+
+        JSONObject schema = null;
+        schema = (JSONObject) result[0];
+        //assertTrue(schema !=  null);
+    }
+
 
 }
