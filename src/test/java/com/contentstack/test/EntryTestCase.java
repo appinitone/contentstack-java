@@ -12,6 +12,7 @@ import org.junit.runner.JUnitCore;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 
@@ -23,7 +24,7 @@ public class EntryTestCase extends JUnitCore {
 
     public EntryTestCase() throws Exception{
         Config config = new Config();
-        config.setHost("cdn.contentstack.io");
+        config.setHost("stag-cdn.contentstack.io");
         String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
         String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
         String DEFAULT_ENV = "env1";
@@ -262,7 +263,6 @@ public class EntryTestCase extends JUnitCore {
             }
         });
         latch.await();
-
     }
 
 
@@ -275,6 +275,16 @@ public class EntryTestCase extends JUnitCore {
             public void onCompletion(ResponseType responseType, Error error) {
 
                 if (error == null) {
+                    JSONObject jsonResult = entry.toJSON();
+                    try {
+                       JSONArray  cartList = (JSONArray) jsonResult.get("cart");
+                        Object whatTYPE = cartList.get(0);
+                        if (whatTYPE instanceof JSONObject){
+                            assertTrue(true);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     latch.countDown();
                 } else {
                     latch.countDown();
@@ -286,5 +296,26 @@ public class EntryTestCase extends JUnitCore {
 
     }
 
+
+
+    @Test
+    public void test_Locale() throws InterruptedException {
+        final Entry entry = stack.contentType("user").entry("blt3b0aaebf6f1c3762");
+        entry.fetch(new EntryResultCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, Error error) {
+
+                if (error == null) {
+                    String checkResp = entry.getLocale();
+                    Stack.log("checkResp",checkResp);
+                    latch.countDown();
+                } else {
+                    latch.countDown();
+                }
+
+            }
+        });
+        latch.await();
+    }
 
 }

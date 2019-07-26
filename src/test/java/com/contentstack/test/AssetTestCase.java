@@ -27,7 +27,7 @@ public class AssetTestCase extends JUnitCore {
     @Before
     public void setUp() throws Exception {
         Config config = new Config();
-        config.setHost("cdn.contentstack.io");
+        config.setHost("stag-cdn.contentstack.io");
         String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
         String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
         String DEFAULT_ENV = "env1";
@@ -48,7 +48,7 @@ public class AssetTestCase extends JUnitCore {
                     logger.debug( "----------Test--Asset-01--Success---------" + entry.toJSON());
                     Asset asset = entry.getAsset("imagefile");
 
-                    logger.debug("----------Test--Asset-01--Success---------" + asset.toJSON());
+                    logger.debug( "----------Test--Asset-01--Success---------" + asset.toJSON());
                     logger.debug( "----------Test--Asset-01--Success---------" + asset.getFileType());
                     logger.debug( "----------Test--Asset-01--Success---------" + asset.getCreatedBy());
                     logger.debug( "----------Test--Asset-01--Success---------" + asset.getUpdatedBy());
