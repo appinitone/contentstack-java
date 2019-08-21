@@ -6,7 +6,6 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -15,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 /**
@@ -1246,42 +1243,60 @@ public class QueryTestCase  extends JUnitCore {
             }
         });
 
-        JSONObject schema = null;
-        schema = (JSONObject) result[0];
-        //assertTrue(schema !=  null);
     }
 
 
 
+
+
     @Test
-    public void test_44_IncludeReferenceContentTypeUID(){
+    public void test_45_check_in_query_key_method_whereIn(){
 
-        ContentType ct = stack.contentType("product");
+        Stack where_stack = null;
+        try {
+            where_stack = Contentstack.stack("blt20962a819b57e233", "blt01638c90cc28fb6f", "production");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ContentType ct = where_stack.contentType("product");
         Query query = ct.query();
-        query.includeReferenceContentTypUid();
-
+        query.locale("en-us");
+        query.where("title","Apple Inc");
+        query.whereIn("brand");
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
 
                 if (error == null) {
-                    List<Entry> entries = queryresult.getResultObjects();
-                    Entry entry = entries.get(0);
-                    JSONArray category = (JSONArray)entry.get("category");
-                    if (category instanceof JSONArray){
-                        try {
-                            if (category.get(0) instanceof JSONObject){
-                                assertTrue(true);
-                            }
-                        }catch (JSONException exception){
-                            assertEquals("e", "3");
-                        }
-                    }
+                    assertTrue(true);
+                }
+            }
+        });
 
-                } else {
-                    int errorErrorCode = error.getErrorCode();
-                    assertEquals(200, errorErrorCode);
+    }
 
+
+
+    @Test
+    public void test_46_check_nin_query_key_method_whereNotIn(){
+
+        Stack where_stack = null;
+        try {
+            where_stack = Contentstack.stack("blt20962a819b57e233", "blt01638c90cc28fb6f", "production");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ContentType ct = where_stack.contentType("product");
+        Query query = ct.query();
+        query.locale("en-us");
+        query.where("title","Apple Inc");
+        query.whereNotIn("brand");
+        query.find(new QueryResultsCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
+
+                if (error == null) {
+                    assertTrue(true);
                 }
             }
         });
