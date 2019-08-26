@@ -22,7 +22,6 @@ public class SyncTestCase {
     private String dateISO = null;
     private int include_count = 0;
     private final Logger logger = LogManager.getLogger(SyncTestCase.class);
-
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     private void initLog() { BasicConfigurator.configure(); }
 
@@ -31,9 +30,12 @@ public class SyncTestCase {
         initLog();
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
+        //config.setRegion(Config.ContentstackRegion.US);
         String prod_api_key = "blt477ba55f9a67bcdf";
         String prod_delivery_Token = "cs7731f03a2feef7713546fde5";
         String environment = "web";
+        //String prod_api_key = "blt73e723ec8245254a";
+        //String prod_delivery_Token = "csadbc3779c89ef1b3312cd65f";
         stack = Contentstack.stack(prod_api_key, prod_delivery_Token, environment, config);
     }
 
@@ -48,17 +50,14 @@ public class SyncTestCase {
                 if (error == null) {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
-
+                    String sync_token = syncStack.getSyncToken();
                     logger.debug( "sync stack size  :"+syncStack.getItems().size());
                     logger.debug("sync stack count  :"+syncStack.getCount());
                     syncStack.getItems().forEach(item-> logger.debug(  item.toString()));
 
                     assertEquals(counter, syncStack.getCount());
                 }
-
             }});
-
-
     }
 
 
@@ -69,14 +68,9 @@ public class SyncTestCase {
         stack.syncToken("bltbb61f31a70a572e6c9506a", new SyncResultCallBack() {
             @Override
             public void onCompletion(SyncStack syncStack, Error error) {
-
                 if (error == null) {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
-
-                    logger.debug("sync token size  :"+syncStack.getItems().size());
-                    logger.debug("sync token count  :"+syncStack.getCount());
-                    syncStack.getItems().forEach(item-> logger.debug( "sync token result"+item.toString()));
                     assertEquals( itemsSize, syncStack.getItems().size());
                 }
             }
@@ -84,11 +78,6 @@ public class SyncTestCase {
 
 
     }
-
-
-
-
-
 
     @Test
     public void testPaginationToken() {
@@ -105,14 +94,9 @@ public class SyncTestCase {
                     syncStack.getItems().forEach(item-> logger.debug( "Pagination"+item.toString()));
                     //assertEquals( itemsSize, itemsSize);
                 }
-
             }
         });
-
     }
-
-
-
 
 
     @Test
@@ -296,8 +280,6 @@ public class SyncTestCase {
                 }
             }
         });
-
-        //assertEquals(100, itemsSize);
     }
 
 
