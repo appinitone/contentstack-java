@@ -27,13 +27,13 @@ public class ImageTransformTestcase extends JUnitCore {
         initLog();
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
-        //config.setRegion(Config.ContentstackRegion.US);
-        String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
-        String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
+        config.setRegion(Config.ContentstackRegion.EU);
+        //String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
+        //String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
         String DEFAULT_ENV = "env1";
-        //String DEFAULT_APPLICATION_KEY = "blt50c347da226ba23b";
-        //String DEFAULT_ACCESS_TOKEN = "cs59cd01c8a10d149496fe14b6";
 
+        String DEFAULT_APPLICATION_KEY = "bltc12b8d966127fa01";
+        String DEFAULT_ACCESS_TOKEN = "cse3ab6095485b70ab2713ed60";
         stack = Contentstack.stack(DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
         latch = new CountDownLatch(1);
     }
