@@ -30,12 +30,13 @@ public class SyncTestCase {
         initLog();
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
-        //config.setRegion(Config.ContentstackRegion.US);
-        String prod_api_key = "blt477ba55f9a67bcdf";
-        String prod_delivery_Token = "cs7731f03a2feef7713546fde5";
+        config.setRegion(Config.ContentstackRegion.EU);
+        //String prod_api_key = "blt477ba55f9a67bcdf";
+        //String prod_delivery_Token = "cs7731f03a2feef7713546fde5";
         String environment = "web";
-        //String prod_api_key = "blt73e723ec8245254a";
-        //String prod_delivery_Token = "csadbc3779c89ef1b3312cd65f";
+
+        String prod_api_key = "bltec63b57f491547fe";
+        String prod_delivery_Token = "cs5834dc67621234eb68fce5dd";
         stack = Contentstack.stack(prod_api_key, prod_delivery_Token, environment, config);
     }
 
