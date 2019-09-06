@@ -30,7 +30,7 @@ public class SyncTestCase {
         initLog();
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
-        config.setRegion(Config.ContentstackRegion.EUROPE);
+        config.setRegion(Config.ContentstackRegion.EU);
         //String prod_api_key = "blt477ba55f9a67bcdf";
         //String prod_delivery_Token = "cs7731f03a2feef7713546fde5";
         String environment = "web";
