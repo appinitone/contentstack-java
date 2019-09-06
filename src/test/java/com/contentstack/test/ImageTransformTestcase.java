@@ -27,7 +27,7 @@ public class ImageTransformTestcase extends JUnitCore {
         initLog();
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
-        config.setRegion(Config.ContentstackRegion.EUROPE);
+        config.setRegion(Config.ContentstackRegion.EU);
         //String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
         //String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
         String DEFAULT_ENV = "env1";
