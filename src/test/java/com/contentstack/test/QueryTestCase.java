@@ -6,6 +6,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -27,18 +28,20 @@ public class QueryTestCase  extends JUnitCore {
     private final Logger logger = LogManager.getLogger(QueryTestCase.class);
 
     private void initLog() { BasicConfigurator.configure(); }
+
     public QueryTestCase() throws Exception {
         initLog();
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
-        config.setRegion(Config.ContentstackRegion.EU);
-        //String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
-        //String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
+        String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
+        String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
         String DEFAULT_ENV = "env1";
 
+        //setup for EU uncomment below
+        //config.setRegion(Config.ContentstackRegion.EU);
+        //String DEFAULT_APPLICATION_KEY = "bltc12b8d966127fa01";
+        //String DEFAULT_ACCESS_TOKEN = "cse3ab6095485b70ab2713ed60";
 
-        String DEFAULT_APPLICATION_KEY = "bltc12b8d966127fa01";
-        String DEFAULT_ACCESS_TOKEN = "cse3ab6095485b70ab2713ed60";
         stack = Contentstack.stack(DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
         containArray = new String[]{"Roti Maker", "kids dress"};
     }
@@ -769,7 +772,8 @@ public class QueryTestCase  extends JUnitCore {
 
         ContentType ct = stack.contentType("product");
         Query query = ct.query();
-        query.except(new String[]{"price"});
+        query.locale("en-eu");
+        query.except(new String[]{"price", "chutiya"});
         final Object[] result = new Object[]{new Object()};
 
         query.find(new QueryResultsCallBack() {
@@ -858,10 +862,6 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     entries = (ArrayList<Entry>) queryresult.getResultObjects();
-
-                } else {
-                    //result[0] = error.getErrorCode();
-
                 }
             }
         });
@@ -885,9 +885,6 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getCount();
-
-                } else {
-
                 }
             }
         });
@@ -913,10 +910,6 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-
-                } else {
-                    //result[0] = error.getErrorCode();
-
                 }
             }
         });
@@ -937,10 +930,6 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-
-                } else {
-                    //result[0] = error.getErrorCode();
-
                 }
             }
         });
@@ -1233,7 +1222,6 @@ public class QueryTestCase  extends JUnitCore {
         Query query = ct.query();
         query.addParam("someKey", "someObject");
         final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
@@ -1267,7 +1255,7 @@ public class QueryTestCase  extends JUnitCore {
         Query query = ct.query();
         query.locale("en-us");
         query.where("title","Apple Inc");
-        query.whereIn("brand");
+        query.whereIn("brand", query);
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
@@ -1291,11 +1279,12 @@ public class QueryTestCase  extends JUnitCore {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        assert where_stack != null;
         ContentType ct = where_stack.contentType("product");
         Query query = ct.query();
         query.locale("en-us");
         query.where("title","Apple Inc");
-        query.whereNotIn("brand");
+        query.whereNotIn("brand", query);
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
@@ -1307,6 +1296,7 @@ public class QueryTestCase  extends JUnitCore {
         });
 
     }
+
 
 
 }

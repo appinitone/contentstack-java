@@ -8,11 +8,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
-
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
-
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 
@@ -25,13 +22,15 @@ public class EntryTestCase extends JUnitCore {
     public EntryTestCase() throws Exception{
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
-        config.setRegion(Config.ContentstackRegion.EU);
-        //String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
-        //String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
+        String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
+        String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
         String DEFAULT_ENV = "env1";
 
-        String DEFAULT_APPLICATION_KEY = "bltc12b8d966127fa01";
-        String DEFAULT_ACCESS_TOKEN = "cse3ab6095485b70ab2713ed60";
+        //setup for EU uncomment below
+        //config.setRegion(Config.ContentstackRegion.EU);
+        //String DEFAULT_APPLICATION_KEY = "bltc12b8d966127fa01";
+        //String DEFAULT_ACCESS_TOKEN = "cse3ab6095485b70ab2713ed60";
+
         stack = Contentstack.stack(DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV,config);
         uidArray = new String[]{"blte88d9bec040e7c7c", "bltdf783472903c3e21"};
         latch = new CountDownLatch(1);
@@ -45,7 +44,6 @@ public class EntryTestCase extends JUnitCore {
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
-
                 if (error == null) {
                     latch.countDown();
                 } else {
@@ -64,7 +62,6 @@ public class EntryTestCase extends JUnitCore {
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
-
                 if (error == null) {
                     latch.countDown();
                 } else {
@@ -83,7 +80,6 @@ public class EntryTestCase extends JUnitCore {
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
-
                 if (error == null) {
                     latch.countDown();
                 } else {
@@ -102,24 +98,19 @@ public class EntryTestCase extends JUnitCore {
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
-
                 if (error == null) {
                     latch.countDown();
                 } else {
                     latch.countDown();
                 }
-
             }
         });
         latch.await();
         JSONArray categoryArray = (JSONArray) entry.getJSONArray("category");
-
         try {
-
             if (categoryArray != null){
                 assertTrue(categoryArray.get(0) instanceof JSONObject);
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -127,10 +118,10 @@ public class EntryTestCase extends JUnitCore {
     @Test
     public void test_04_includeReferenceOnly_fetch() throws InterruptedException {
         final Entry entry = stack.contentType("product").entry("blt7801c5d40cbbe979");
-
         ArrayList<String> strings = new ArrayList<>();
         strings.add("title");
-
+        strings.add("orange");
+        strings.add("mango");
         entry.onlyWithReferenceUid(strings, "category");
         entry.fetch(new EntryResultCallBack() {
             @Override
@@ -145,39 +136,30 @@ public class EntryTestCase extends JUnitCore {
             }
         });
         latch.await();
-
         try {
             JSONArray categoryArray = (JSONArray) entry.getJSONArray("category");
-
             if (categoryArray != null){
-
                 JSONObject jsonObject = categoryArray.getJSONObject(0);
                 boolean isContains = false;
-                if (jsonObject.has("title")) {
-                    isContains = true;
-                }
-
+                if (jsonObject.has("title")) { isContains = true; }
                 assertTrue(isContains);
             }
-
-
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
+
     @Test
     public void test_05_includeReferenceExcept_fetch() throws InterruptedException {
         final Entry entry = stack.contentType("product").entry("blt7801c5d40cbbe979");
-
         ArrayList<String> strings = new ArrayList<>();
-        strings.add("title");
-
+        strings.add("color");
+        strings.add("price_in_usd");
         entry.exceptWithReferenceUid(strings, "category");
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
-
                 if (error == null) {
                     latch.countDown();
                 } else {
@@ -189,23 +171,23 @@ public class EntryTestCase extends JUnitCore {
         latch.await();
 
     }
+
+
+
     @Test
     public void test_06_getMarkdown_fetch() throws InterruptedException {
         final Entry entry = stack.contentType("user").entry("blt3b0aaebf6f1c3762");
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
-
                 if (error == null) {
                     latch.countDown();
                 } else {
                     latch.countDown();
                 }
-
             }
         });
         latch.await();
-
     }
 
 
@@ -215,17 +197,14 @@ public class EntryTestCase extends JUnitCore {
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
-
                 if (error == null) {
                     latch.countDown();
                 } else {
                     latch.countDown();
                 }
-
             }
         });
         latch.await();
-
     }
 
 
@@ -235,17 +214,14 @@ public class EntryTestCase extends JUnitCore {
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
-
                 if (error == null) {
                     latch.countDown();
                 } else {
                     latch.countDown();
                 }
-
             }
         });
         latch.await();
-
     }
 
 
@@ -263,7 +239,6 @@ public class EntryTestCase extends JUnitCore {
                 } else {
                     latch.countDown();
                 }
-
             }
         });
         latch.await();
@@ -277,7 +252,6 @@ public class EntryTestCase extends JUnitCore {
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
-
                 if (error == null) {
                     JSONObject jsonResult = entry.toJSON();
                     try {
@@ -293,7 +267,6 @@ public class EntryTestCase extends JUnitCore {
                 } else {
                     latch.countDown();
                 }
-
             }
         });
         latch.await();
@@ -308,7 +281,6 @@ public class EntryTestCase extends JUnitCore {
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
-
                 if (error == null) {
                     String checkResp = entry.getLocale();
                     Stack.log("checkResp",checkResp);
@@ -317,6 +289,26 @@ public class EntryTestCase extends JUnitCore {
                     latch.countDown();
                 }
 
+            }
+        });
+        latch.await();
+    }
+
+    @Test
+    public void test_entry_except() throws InterruptedException {
+        final Entry entry = stack.contentType("user").entry("blt3b0aaebf6f1c3762");
+        String[] allValues = {"color", "price_in_usd"};
+        entry.except(allValues);
+        entry.fetch(new EntryResultCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, Error error) {
+                if (error == null) {
+                    String checkResp = entry.getLocale();
+                    Stack.log("checkResp",checkResp);
+                    latch.countDown();
+                } else {
+                    latch.countDown();
+                }
             }
         });
         latch.await();

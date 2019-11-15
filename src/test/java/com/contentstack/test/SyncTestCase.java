@@ -5,6 +5,7 @@ import com.contentstack.sdk.*;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import java.text.ParseException;
@@ -30,13 +31,15 @@ public class SyncTestCase {
         initLog();
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
-        config.setRegion(Config.ContentstackRegion.EU);
-        //String prod_api_key = "blt477ba55f9a67bcdf";
-        //String prod_delivery_Token = "cs7731f03a2feef7713546fde5";
+        String prod_api_key = "blt477ba55f9a67bcdf";
+        String prod_delivery_Token = "cs7731f03a2feef7713546fde5";
         String environment = "web";
 
-        String prod_api_key = "bltec63b57f491547fe";
-        String prod_delivery_Token = "cs5834dc67621234eb68fce5dd";
+        //setup for EU uncomment below
+        //config.setRegion(Config.ContentstackRegion.EU);
+        //String prod_api_key = "bltec63b57f491547fe";
+        //String prod_delivery_Token = "cs5834dc67621234eb68fce5dd";
+
         stack = Contentstack.stack(prod_api_key, prod_delivery_Token, environment, config);
     }
 
@@ -239,10 +242,8 @@ public class SyncTestCase {
                 if (error == null) {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
-
                     logger.debug( "stack with all type==>"+counter);
                     syncStack.getItems().forEach(items-> logger.debug(  "sync with all type: "+items.toString()));
-
                     assertEquals(itemsSize, syncStack.getItems().size());
                 }
 
@@ -254,12 +255,25 @@ public class SyncTestCase {
 
 
     @Test
-    public void getAllContentTypes() {
+    public void test_get_all_stack_content_types() throws JSONException {
+        Stack where_stack = null;
+        try {
+            where_stack = Contentstack.stack("blt20962a819b57e233", "blt01638c90cc28fb6f", "production");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        stack.getContentTypes( new ContentTypesCallback() {
+        JSONObject params = new JSONObject();
+        params.put("include_snippet_schema", true);
+        params.put("limit", 3);
+
+        assert where_stack != null;
+        where_stack.getContentTypes(params, new ContentTypesCallback() {
             @Override
             public void onCompletion(ContentTypesModel contentTypesModel, Error error) {
-                logger.debug( "getAllContentTypes reponse: "+ contentTypesModel.getResultArray());
+                if (error == null){
+                    Stack.log("STACK", contentTypesModel.getResponse().toString());
+                }
             }
         });
 
@@ -268,10 +282,19 @@ public class SyncTestCase {
 
 
     @Test
-    public void getSingleContentType() {
+    public void getSingleContentType() throws JSONException {
 
-        ContentType  contentType = stack.contentType("schema");
-        contentType.fetch(new ContentTypesCallback() {
+        Stack where_stack = null;
+        try {
+            where_stack = Contentstack.stack("blt20962a819b57e233", "blt01638c90cc28fb6f", "production");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ContentType  contentType = where_stack.contentType("product");
+        JSONObject params = new JSONObject();
+        params.put("include_snippet_schema", true);
+        params.put("limit", 3);
+        contentType.fetch(params, new ContentTypesCallback() {
             @Override
             public void onCompletion(ContentTypesModel contentTypesModel, Error error) {
                 if (error==null){
