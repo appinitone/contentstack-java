@@ -1,8 +1,8 @@
 package com.contentstack.test;
-
-
 import com.contentstack.sdk.Error;
 import com.contentstack.sdk.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,13 +13,14 @@ import java.util.concurrent.CountDownLatch;
 import static junit.framework.TestCase.assertTrue;
 
 
-public class EntryTestCase extends JUnitCore {
+public class TestEntryTestCase extends JUnitCore {
 
+    private Logger logger = LogManager.getLogger(TestEntryTestCase.class.getName());
     private CountDownLatch latch;
     private Stack stack;
     private String[] uidArray;
 
-    public EntryTestCase() throws Exception{
+    public TestEntryTestCase() throws Exception{
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
         String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
@@ -283,7 +284,7 @@ public class EntryTestCase extends JUnitCore {
             public void onCompletion(ResponseType responseType, Error error) {
                 if (error == null) {
                     String checkResp = entry.getLocale();
-                    Stack.log("checkResp",checkResp);
+                    logger.debug(checkResp);
                     latch.countDown();
                 } else {
                     latch.countDown();
@@ -304,7 +305,7 @@ public class EntryTestCase extends JUnitCore {
             public void onCompletion(ResponseType responseType, Error error) {
                 if (error == null) {
                     String checkResp = entry.getLocale();
-                    Stack.log("checkResp",checkResp);
+                    logger.debug(checkResp);
                     latch.countDown();
                 } else {
                     latch.countDown();

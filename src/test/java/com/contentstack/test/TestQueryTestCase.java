@@ -2,11 +2,6 @@ package com.contentstack.test;
 
 import com.contentstack.sdk.Error;
 import com.contentstack.sdk.*;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -15,22 +10,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import static junit.framework.TestCase.assertTrue;
 
 /**
  * Created by Shailesh Mishra on 22/8/17.
  */
-public class QueryTestCase  extends JUnitCore {
+public class TestQueryTestCase extends JUnitCore {
 
     private Stack stack;
     private String[] containArray;
     private ArrayList<Entry> entries = null;
-    private final Logger logger = LogManager.getLogger(QueryTestCase.class);
+    static final Logger logger =  LogManager.getLogger(TestQueryTestCase.class.getName());
 
-    private void initLog() { BasicConfigurator.configure(); }
-
-    public QueryTestCase() throws Exception {
-        initLog();
+    public TestQueryTestCase() throws Exception {
         Config config = new Config();
         config.setHost("cdn.contentstack.io");
         String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
@@ -94,7 +89,7 @@ public class QueryTestCase  extends JUnitCore {
         try{
             if (entries !=null && result.length > 0){
                 entries = (List<Entry>) result [0];
-                logger.debug("Test_01======>"+"entries : "+result.length);
+                logger.info("Test_01======>"+"entries : "+result.length);
             }
 
         } catch (ClassCastException cce){
@@ -117,7 +112,7 @@ public class QueryTestCase  extends JUnitCore {
                 if (error == null) {
                     List<Entry> titles = queryresult.getResultObjects();
                     titles.forEach(title->{
-                        logger.debug("title: "+title.getString("title"));
+                        logger.info("title: "+title.getString("title"));
                     });
                 }
             }
@@ -147,7 +142,7 @@ public class QueryTestCase  extends JUnitCore {
         List<Entry> entries = null;
         entries = (List<Entry>) result[0];
         if(entries != null){
-            logger.debug("Test_03-------->"+entries.toString());
+            logger.info("Test_03-------->"+entries.toString());
 
         }
     }
@@ -187,7 +182,7 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     List<Entry> entries = queryresult.getResultObjects();
-                    entries.forEach(entry -> logger.debug(entry.getString("price")));
+                    entries.forEach(entry -> logger.info(entry.getString("price")));
                 }
             }
         });
@@ -197,7 +192,7 @@ public class QueryTestCase  extends JUnitCore {
             boolean isContains = false;
             for (Entry entry : entries) {
                 if (Arrays.asList(containArray).contains(entry.getString("title"))) {
-                    logger.debug("Test_05-------->"+entry.toJSON().toString());
+                    logger.info("Test_05-------->"+entry.toJSON().toString());
                     isContains = true;
                 }
             }
@@ -220,7 +215,7 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     List<Entry> entries = queryresult.getResultObjects();
-                    entries.forEach(entry -> logger.debug( entry.getString("price")));
+                    entries.forEach(entry -> logger.info( entry.getString("price")));
                 }
             }
         });
@@ -251,7 +246,7 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     List<Entry> entries = queryresult.getResultObjects();
-                    entries.forEach(entry -> logger.debug( entry.getString("title")));
+                    entries.forEach(entry -> logger.info( entry.getString("title")));
                 }
             }
         });
@@ -274,7 +269,7 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     List<Entry> entries = queryresult.getResultObjects();
-                    entries.forEach(entry -> logger.debug( entry.getString("price")));
+                    entries.forEach(entry -> logger.info( entry.getString("price")));
                 }
             }
         });
@@ -296,7 +291,7 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     List<Entry> entries = queryresult.getResultObjects();
-                    entries.forEach(entry -> logger.debug(entry.getString("price")));
+                    entries.forEach(entry -> logger.info(entry.getString("price")));
                 }
             }
         });
@@ -320,7 +315,7 @@ public class QueryTestCase  extends JUnitCore {
                 if (error == null) {
 
                     List<Entry> entries = queryresult.getResultObjects();
-                    entries.forEach(entry -> logger.debug(entry.getString("price")));
+                    entries.forEach(entry -> logger.info(entry.getString("price")));
 
                 }
             }
@@ -344,7 +339,7 @@ public class QueryTestCase  extends JUnitCore {
                 if (error == null) {
                     List<Entry> resp = queryresult.getResultObjects();
                     resp.forEach(entry -> {
-                        logger.debug("Is price less than 90..? "+entry.get("price"));
+                        logger.info("Is price less than 90..? "+entry.get("price"));
                     });
 
                 } else {
@@ -565,10 +560,10 @@ public class QueryTestCase  extends JUnitCore {
                     try {
                         Object value = jsonObject.opt(key);
                         if(value instanceof String && ((String) value).contains("dress"))
-                            logger.debug( value.toString());
+                            logger.info( value.toString());
                     } catch (Exception e) {
                         String TAG = "QueryTestCase";
-                        logger.debug( "----------------setQueryJson"+e.toString());
+                        logger.info( "----------------setQueryJson"+e.toString());
                     }
                 }
 
@@ -595,7 +590,7 @@ public class QueryTestCase  extends JUnitCore {
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
                     for (Entry entry: (List<Entry>)result[0]) {
-                        logger.debug(  entry.getString("title"));
+                        logger.info(  entry.getString("title"));
                     }
 
 
@@ -616,7 +611,7 @@ public class QueryTestCase  extends JUnitCore {
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
                     for (Entry entry: (List<Entry>)result[0]) {
-                        logger.debug( entry.getString("title"));
+                        logger.info( entry.getString("title"));
                     }
 
 
@@ -650,7 +645,7 @@ public class QueryTestCase  extends JUnitCore {
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
                     for (Entry entry: (List<Entry>)result[0]) {
-                        logger.debug(entry.getString("title"));
+                        logger.info(entry.getString("title"));
                     }
 
 
@@ -683,7 +678,7 @@ public class QueryTestCase  extends JUnitCore {
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
                     for (Entry entry: (List<Entry>)result[0]) {
-                        logger.debug(" entry = [" + entry.getString("title") + "]");
+                        logger.info(" entry = [" + entry.getString("title") + "]");
                     }
 
 
@@ -1077,7 +1072,7 @@ public class QueryTestCase  extends JUnitCore {
 
                 if (error == null) {
                     result[0] = queryresult.getResultObjects();
-                    logger.debug("responseType = [" + responseType + "], queryresult = [" + queryresult.getResultObjects().size() + "]");
+                    logger.info("responseType = [" + responseType + "], queryresult = [" + queryresult.getResultObjects().size() + "]");
 
                 } else {
 
