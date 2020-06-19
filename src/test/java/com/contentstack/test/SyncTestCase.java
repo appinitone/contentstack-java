@@ -23,24 +23,13 @@ public class SyncTestCase {
     private int itemsSize = 0;
     private int counter = 0;
     private String dateISO = null;
-    private final int include_count = 0;
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     public SyncTestCase() throws Exception {
-        //Configurator.initialize(new DefaultConfiguration());
-        Config config = new Config();
-        config.setHost("cdn.contentstack.io");
-        //config.setHost("stag-cdn.contentstack.io");
-        String prod_api_key = "blt477ba55f9a67bcdf";
-        String prod_delivery_Token = "cs7731f03a2feef7713546fde5";
-        String environment = "web";
-
-        //setup for EU uncomment below
-//        config.setRegion(Config.ContentstackRegion.EU);
-//        String prod_api_key = "bltec63b57f491547fe";
-//        String prod_delivery_Token = "cs5834dc67621234eb68fce5dd";
-
-        stack = Contentstack.stack(prod_api_key, prod_delivery_Token, environment, config);
+        String API_KEY = "blt477ba55f9a67bcdf";
+        String DELIVERY_TOKEN = "cs7731f03a2feef7713546fde5";
+        String ENVIRONMENT = "web";
+        stack = Contentstack.stack(API_KEY, DELIVERY_TOKEN, ENVIRONMENT);
     }
 
 
@@ -54,7 +43,6 @@ public class SyncTestCase {
                 if (error == null) {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
-                    String sync_token = syncStack.getSyncToken();
                     logger.info("sync stack size  :" + syncStack.getItems().size());
                     logger.info("sync stack count  :" + syncStack.getCount());
                     syncStack.getItems().forEach(item -> logger.info(item.toString()));
@@ -275,6 +263,7 @@ public class SyncTestCase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        assert where_stack != null;
         ContentType contentType = where_stack.contentType("product");
         JSONObject params = new JSONObject();
         params.put("include_snippet_schema", true);
