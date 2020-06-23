@@ -1,180 +1,133 @@
 package com.contentstack.test;
-
-import com.contentstack.sdk.Error;
 import com.contentstack.sdk.*;
-import org.json.JSONObject;
-import org.junit.Test;
-import org.junit.runner.JUnitCore;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import com.contentstack.sdk.Error;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.*;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
-import static junit.framework.TestCase.assertTrue;
 
-/**
- * Created by Shailesh Mishra on 22/8/17.
- */
-public class TestQueryTestCase extends JUnitCore {
+public class QueryTestCase {
 
-    private Stack stack;
-    private String[] containArray;
-    private ArrayList<Entry> entries = null;
-    static final Logger logger =  LogManager.getLogger(TestQueryTestCase.class.getName());
+    private static final Logger logger = LogManager.getLogger(AssetTestCase.class);
+    private static Stack stack;
+    private static Query query;
+    private static CountDownLatch latch;
 
-    public TestQueryTestCase() throws Exception {
-        Config config = new Config();
-        config.setHost("cdn.contentstack.io");
-        String DEFAULT_APPLICATION_KEY = "blt12c8ad610ff4ddc2";
-        String DEFAULT_ACCESS_TOKEN = "blt43359585f471685188b2e1ba";
-        String DEFAULT_ENV = "env1";
+    @BeforeClass
+    public static void oneTimeSetUp() throws Exception {
+        JSONObject credential = new ReadJsonFile().readCredentials();
+        if (credential != null) {
+            Config config = new Config();
+            String  host = credential.optString("host");
+            config.setHost(host);
+            String DEFAULT_API_KEY = credential.optString("api_key");
+            String DEFAULT_DELIVERY_TOKEN = credential.optString("delivery_token");
+            String DEFAULT_ENV = credential.optString("environment");
+            stack = Contentstack.stack(DEFAULT_API_KEY, DEFAULT_DELIVERY_TOKEN, DEFAULT_ENV, config);
+            query = stack.contentType("product").query();
+        }
+        latch = new CountDownLatch(1);
+        logger.info("test started...");
+    }
 
-        //setup for EU uncomment below
-        //config.setRegion(Config.ContentstackRegion.EU);
-        //String DEFAULT_APPLICATION_KEY = "bltc12b8d966127fa01";
-        //String DEFAULT_ACCESS_TOKEN = "cse3ab6095485b70ab2713ed60";
+    @AfterClass
+    public static void oneTimeTearDown() {
+        logger.info("When all the test cases of class finishes...");
+        logger.info("Total testcase: " + latch.getCount());
+    }
 
-        stack = Contentstack.stack(DEFAULT_APPLICATION_KEY, DEFAULT_ACCESS_TOKEN, DEFAULT_ENV, config);
-        containArray = new String[]{"Roti Maker", "kids dress"};
+    /**
+     * Sets up the test fixture.
+     * (Called before every test case method.)
+     */
+    @Before
+    public void setUp() {
+        query = stack.contentType("product").query();
+        latch = new CountDownLatch(1);
     }
 
 
+    /**
+     * Tears down the test fixture.
+     * (Called after every test case method.)
+     */
+    @After
+    public void tearDown() {
+        logger.info("Runs after every testcase completes.");
+        latch.countDown();
+    }
+
 
     @Test
-    public void test_00_fetchAllEntries() throws InterruptedException {
-        Query query = stack.contentType("product").query();
-        final Object[] result = new Object[]{new Object()};
+    public void test_01_fetchAllEntries() {
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
+                    List<Entry> listOfEntries = queryresult.getResultObjects();
                 }
             }
         });
-
-        List<Entry> entries = null;
-        try{
-            entries = (List<Entry>) result[0];
-        } catch (ClassCastException cce){
-
-        }
     }
 
 
-
-    @Test
-    public void test_01_fetchEntriesOfNonExistingContentType() throws InterruptedException {
-        Query query = stack.contentType("department").query();
-        final Object[] result = new Object[]{new Object()};
-        final String[] s = {null};
-        query.find(new QueryResultsCallBack() {
-            @Override
-            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-                if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-
-                } else {
-                    s[0] = error.getErrorMessage().trim();
-
-                }
-            }
-        });
-
-
-        List<Entry> entries = null;
-        try{
-            if (entries !=null && result.length > 0){
-                entries = (List<Entry>) result [0];
-                logger.info("Test_01======>"+"entries : "+result.length);
-            }
-
-        } catch (ClassCastException cce){
-            assertTrue(s[0].compareTo("The Content Type 'products' was not found. Please try again.1")<0);
-        }
-    }
-
-
-
-
-
-    @Test
-    public void test_02_fetchSingleEntry() throws InterruptedException,ClassCastException {
+    @Test()
+    public void test_02_fetchSingleEntry() {
         Query query = stack.contentType("categories").query();
-        query.where("title","Women");
+        query.where("title", "Women");
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
                     List<Entry> titles = queryresult.getResultObjects();
-                    titles.forEach(title->{
-                        logger.info("title: "+title.getString("title"));
+                    titles.forEach(title -> {
+                        logger.info("title: " + title.getString("title"));
                     });
                 }
             }
         });
-
     }
 
 
-
-
-
-    @Test
-    public void test_03_fetchSingleNonExistingEntry()throws InterruptedException,ClassCastException {
+    @Test()
+    public void test_03_fetchSingleNonExistingEntry() {
         Query query = stack.contentType("categories").query();
-        final Object[] result = new Object[]{new Object()};
-        query.where("uid","blta3b58d6893d8935b");
+        query.where("uid", "blta3b58d6893d8935b");
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
+                    List<Entry> listOfEntries = queryresult.getResultObjects();
                 }
             }
         });
-
-        List<Entry> entries = null;
-        entries = (List<Entry>) result[0];
-        if(entries != null){
-            logger.info("Test_03-------->"+entries.toString());
-
-        }
     }
-
-
 
 
     @Test
     public void test_04_fetchEntryWithIncludeReference() {
-        Query query = stack.contentType("product").query();
-        final Object[] result = new Object[]{new Object()};
         query.includeReference("category");
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
+                    List<Entry> listOfEntries = queryresult.getResultObjects();
                 }
             }
         });
-
-
     }
-
-
 
 
     @Test
     public void test_05_fetchEntryNotContainedInField() {
-
-        Query query = stack.contentType("product").query();
+        String[] containArray = new String[]{"Roti Maker", "kids dress"};
         query.notContainedIn("title", containArray);
         query.find(new QueryResultsCallBack() {
             @Override
@@ -186,28 +139,12 @@ public class TestQueryTestCase extends JUnitCore {
                 }
             }
         });
-
-
-        if(entries != null) {
-            boolean isContains = false;
-            for (Entry entry : entries) {
-                if (Arrays.asList(containArray).contains(entry.getString("title"))) {
-                    logger.info("Test_05-------->"+entry.toJSON().toString());
-                    isContains = true;
-                }
-            }
-
-        }
     }
-
-
 
 
     @Test
     public void test_06_fetchEntryContainedInField() {
-
-        Query query = stack.contentType("product").query();
-        final Object[] result = new Object[]{new Object()};
+        String[] containArray = new String[]{"Roti Maker", "kids dress"};
         query.containedIn("title", containArray);
         query.find(new QueryResultsCallBack() {
             @Override
@@ -215,151 +152,95 @@ public class TestQueryTestCase extends JUnitCore {
 
                 if (error == null) {
                     List<Entry> entries = queryresult.getResultObjects();
-                    entries.forEach(entry -> logger.info( entry.getString("price")));
+                    entries.forEach(entry -> logger.info(entry.getString("price")));
                 }
             }
         });
-
-        if(entries != null) {
-            boolean isContains = false;
-            for (Entry entry : entries) {
-                if (!Arrays.asList(containArray).contains(entry.getString("title"))) {
-                    isContains = true;
-                }
-            }
-
-        }
     }
-
-
 
 
     @Test
     public void test_07_fetchEntryNotEqualToField() {
-
-        Query query = stack.contentType("product").query();
-        final Object[] result = new Object[]{new Object()};
         query.notEqualTo("title", "yellow t shirt");
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
                     List<Entry> entries = queryresult.getResultObjects();
-                    entries.forEach(entry -> logger.info( entry.getString("title")));
+                    entries.forEach(entry -> logger.info(entry.getString("title")));
                 }
             }
         });
-
-
     }
-
-
 
 
     @Test
     public void test_08_fetchEntryGreaterThanEqualToField() {
-
-        Query query = stack.contentType("product").query();
-        final Object[] result = new Object[]{new Object()};
         query.greaterThanOrEqualTo("price", 90);
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
                     List<Entry> entries = queryresult.getResultObjects();
-                    entries.forEach(entry -> logger.info( entry.getString("price")));
+                    entries.forEach(entry -> logger.info(entry.getString("price")));
                 }
             }
         });
-
-
     }
 
 
-
     @Test
-    public void test_09_fetchEntryGreaterThanField() throws InterruptedException, ParseException {
-
-        Query query = stack.contentType("product").query();
-        final Object[] result = new Object[]{new Object()};
+    public void test_09_fetchEntryGreaterThanField() {
         query.greaterThan("price", 90);
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
                     List<Entry> entries = queryresult.getResultObjects();
                     entries.forEach(entry -> logger.info(entry.getString("price")));
                 }
             }
         });
-
-
     }
 
 
-
-
-
     @Test
-    public void test_10_fetchEntryLessThanEqualField() throws InterruptedException, ParseException {
-
-        Query query = stack.contentType("product").query();
+    public void test_10_fetchEntryLessThanEqualField() {
         query.lessThanOrEqualTo("price", 90);
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-
                     List<Entry> entries = queryresult.getResultObjects();
                     entries.forEach(entry -> logger.info(entry.getString("price")));
-
                 }
             }
         });
-
     }
 
 
-
-
-
     @Test
-    public void test_11_fetchEntryLessThanField() throws InterruptedException, ParseException {
-
-        Query query = stack.contentType("product").query();
+    public void test_11_fetchEntryLessThanField() {
         query.lessThan("price", "90");
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
                     List<Entry> resp = queryresult.getResultObjects();
                     resp.forEach(entry -> {
-                        logger.info("Is price less than 90..? "+entry.get("price"));
+                        logger.info("Is price less than 90..? " + entry.get("price"));
                     });
-
-                } else {
-
                 }
             }
         });
-
     }
 
 
-
-
     @Test
-    public void test_12_fetchEntriesWithOr() throws InterruptedException, ParseException {
+    public void test_12_fetchEntriesWithOr() {
 
         ContentType ct = stack.contentType("product");
         Query orQuery = ct.query();
-
-        final Object[] result = new Object[]{new Object()};
 
         Query query = ct.query();
         query.lessThan("price", 90);
@@ -376,33 +257,19 @@ public class TestQueryTestCase extends JUnitCore {
         orQuery.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-
-                } else {
-
+                    List<Entry> listOfEntries = queryresult.getResultObjects();
                 }
             }
         });
-
-        List<Entry> entries = null;
-        entries = (List<Entry>) result[0];
-
-        Integer count = 0;
-
     }
 
 
-
-
     @Test
-    public void test_13_fetchEntriesWithAnd() throws InterruptedException, ParseException {
+    public void test_13_fetchEntriesWithAnd() {
 
         ContentType ct = stack.contentType("product");
         Query orQuery = ct.query();
-
-        final Object[] result = new Object[]{new Object()};
 
         Query query = ct.query();
         query.lessThan("price", 90);
@@ -415,471 +282,232 @@ public class TestQueryTestCase extends JUnitCore {
         array.add(subQuery);
 
         orQuery.and(array);
-
         orQuery.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-
-                } else {
-
+                    List<Entry> listOfEntries = queryresult.getResultObjects();
                 }
             }
         });
-
-
     }
 
 
-
-
-
     @Test
-    public void test_14_addQuery() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
-
-        final Object[] result = new Object[]{new Object()};
-
+    public void test_14_addQuery() {
         query.addQuery("limit", "8");
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-
-                } else {
-
+                    List<Entry> listOfEntries = queryresult.getResultObjects();
                 }
             }
         });
-
-
     }
 
 
-
-
-
     @Test
-    public void test_15_removeQueryFromQuery() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
-
-        final Object[] result = new Object[]{new Object()};
-
+    public void test_15_removeQueryFromQuery() {
         query.addQuery("limit", "8");
         query.removeQuery("limit");
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-
-                } else {
-
+                    List<Entry> listOfEntries = queryresult.getResultObjects();
                 }
             }
         });
-
     }
 
 
-
-
-    /*@Test
-    public void test_18_includeSchema() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
-        query.includeSchema();
-        final Object[] result = new Object[]{new Object()};
-
+    @Test
+    public void test_16_includeSchema() {
+        query.includeContentType();
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getSchema();
-
-                } else {
-                    result[0] = error.getErrorCode();
-
+                    JSONObject contentTypeObj = queryresult.getContentType();
                 }
             }
         });
-
-
-
-    }*/
-
-
-
+    }
 
 
     @Test
-    public void test_19_search() throws InterruptedException {
-        String head = "laptop";
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_17_search() {
         query.search("dress");
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-
-                } else {
-                    result[0] = error.getErrorCode();
-
+                    List<Entry> entries = queryresult.getResultObjects();
+                    for (Entry entry : entries) {
+                        JSONObject jsonObject = entry.toJSON();
+                        Iterator<String> iter = jsonObject.keys();
+                        while (iter.hasNext()) {
+                            String key = iter.next();
+                            try {
+                                Object value = jsonObject.opt(key);
+                                if (value instanceof String && ((String) value).contains("dress"))
+                                    logger.info(value.toString());
+                            } catch (Exception e) {
+                                logger.info("----------------setQueryJson" + e.toString());
+                            }
+                        }
+                    }
                 }
             }
         });
-
-        List<Entry> entries = null;
-        entries = (List<Entry>) result[0];
-        if(entries != null){
-            String resultHead = null;
-            for (int i = 0; i < entries.size(); i++) {
-                JSONObject jsonObject = entries.get(i).toJSON();
-                Iterator<String> iter = jsonObject.keys();
-                while (iter.hasNext()) {
-                    String key = iter.next();
-                    try {
-                        Object value = jsonObject.opt(key);
-                        if(value instanceof String && ((String) value).contains("dress"))
-                            logger.info( value.toString());
-                    } catch (Exception e) {
-                        String TAG = "QueryTestCase";
-                        logger.info( "----------------setQueryJson"+e.toString());
-                    }
-                }
-
-            }
-
-        }
     }
 
 
-
-
-
     @Test
-    public void test_20_ascending() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_18_ascending() {
         query.ascending("title");
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    for (Entry entry: (List<Entry>)result[0]) {
-                        logger.info(  entry.getString("title"));
-                    }
-
-
-                } else {
-                    result[0] = error.getErrorCode();
-
-                }
-            }
-        });
-
-
-
-
-        query.find(new QueryResultsCallBack() {
-            @Override
-            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
-                if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    for (Entry entry: (List<Entry>)result[0]) {
-                        logger.info( entry.getString("title"));
-                    }
-
-
-                } else {
-                    result[0] = error.getErrorCode();
-
-                }
-            }
-        });
-
-
-
-    }
-
-
-
-
-
-    @Test
-    public void test_21_descending() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
-        query.descending("title");
-        final Object[] result = new Object[]{new Object()};
-
-        query.find(new QueryResultsCallBack() {
-            @Override
-            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
-                if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    for (Entry entry: (List<Entry>)result[0]) {
+                    List<Entry> entries = queryresult.getResultObjects();
+                    for (Entry entry : entries) {
                         logger.info(entry.getString("title"));
                     }
-
-
-                } else {
-                    result[0] = error.getErrorCode();
-
                 }
             }
         });
-
-
     }
 
 
-
-
-
     @Test
-    public void test_22_limit() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
-        query.limit(3);
-        final Object[] result = new Object[]{new Object()};
-
+    public void test_19_descending() {
+        query.descending("title");
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    for (Entry entry: (List<Entry>)result[0]) {
+                    List<Entry> entries = queryresult.getResultObjects();
+                    for (Entry entry : entries) {
+                        logger.info(entry.getString("title"));
+                    }
+                }
+            }
+        });
+    }
+
+
+    @Test
+    public void test_20_limit() {
+        query.limit(3);
+        query.find(new QueryResultsCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
+                if (error == null) {
+                    List<Entry> entries = queryresult.getResultObjects();
+                    for (Entry entry : entries) {
                         logger.info(" entry = [" + entry.getString("title") + "]");
                     }
-
-
-                } else {
-                    result[0] = error.getErrorCode();
-
                 }
             }
         });
-
-
-
     }
 
 
-
-
     @Test
-    public void test_23_skip() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_21_skip() {
         query.skip(3);
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-
-                } else {
-                    result[0] = error.getErrorCode();
-
+                    List<Entry> entries = queryresult.getResultObjects();
                 }
             }
         });
-
-
-
     }
 
 
-
-
-
     @Test
-    public void test_24_only() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_22_only() {
         query.only(new String[]{"price"});
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    entries = (ArrayList<Entry>) queryresult.getResultObjects();
-
-                } else {
-                    //result[0] = error.getErrorCode();
-
+                    List<Entry> entries = queryresult.getResultObjects();
                 }
             }
         });
-
-        if(entries != null) {
-            boolean isContains = false;
-            for (Entry entry : entries) {
-                if (entry.toJSON().has("title")) {
-                    isContains = true;
-                }
-            }
-
-        }
     }
 
 
-
-
     @Test
-    public void test_25_except() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_23_except() {
         query.locale("en-eu");
         query.except(new String[]{"price", "chutiya"});
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    entries = (ArrayList<Entry>) queryresult.getResultObjects();
-
-                } else {
-                    //result[0] = error.getErrorCode();
-
+                    List<Entry> entries = queryresult.getResultObjects();
                 }
             }
         });
-
-
     }
 
 
     @Test
-    public void test_26_count() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_24_count() {
         query.count();
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getCount();
-
-                } else {
-                    //result[0] = error.getErrorCode();
-
+                    int count = queryresult.getCount();
                 }
             }
         });
-
-
     }
 
 
-
     @Test
-    public void test_27_regex() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_25_regex() {
         query.regex("title", "lap*", "i");
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    entries = (ArrayList<Entry>) queryresult.getResultObjects();
-
-                } else {
-                    //result[0] = error.getErrorCode();
-
+                    List<Entry> entries = queryresult.getResultObjects();
                 }
             }
         });
-
-
     }
 
 
-
     @Test
-    public void test_28_exist() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_26_exist() {
         query.exists("title");
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    entries = (ArrayList<Entry>) queryresult.getResultObjects();
+                    List<Entry> entries = queryresult.getResultObjects();
                 }
             }
         });
-
-
     }
 
 
-
     @Test
-    public void test_29_notExist() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_27_notExist() {
         query.notExists("price1");
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getCount();
+                    int entryCount = queryresult.getCount();
                 }
             }
         });
@@ -888,23 +516,14 @@ public class TestQueryTestCase extends JUnitCore {
     }
 
 
-
-
-
     @Test
-    public void test_32_tags() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_28_tags() {
         query.tags(new String[]{"pink"});
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
+                    List<Entry> entries = queryresult.getResultObjects();
                 }
             }
         });
@@ -914,17 +533,13 @@ public class TestQueryTestCase extends JUnitCore {
 
 
     @Test
-    public void test_33_language() throws InterruptedException, ParseException {
-
-        Query query = stack.contentType("product").query();
+    public void test_29_language() {
         query.language(Language.ENGLISH_UNITED_KINGDOM);
-        final Object[] result = new Object[]{new Object()};
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
+                    List<Entry> entries = queryresult.getResultObjects();
                 }
             }
         });
@@ -934,36 +549,23 @@ public class TestQueryTestCase extends JUnitCore {
 
 
     @Test
-    public void test_34_includeCount() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_30_includeCount() {
         query.includeCount();
-        query.where("uid","blt3976eac6d3a0cb74");
-        final Object[] result = new Object[2];
-
+        query.where("uid", "blt3976eac6d3a0cb74");
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    result[1] = queryresult.getCount();
-
-                } else {
-                    //result[0] = error.getErrorCode();
-
+                    List<Entry> entries = queryresult.getResultObjects();
                 }
             }
         });
-
-
     }
 
 
     @Test
-    public void test_35_includeReferenceOnly_fetch() throws InterruptedException {
-        final Object[] result = new Object[]{new Object()};
+    public void test_31_includeReferenceOnly_fetch() {
+
         final Query query = stack.contentType("multifield").query();
         query.where("uid", "blt1b1cb4f26c4b682e");
 
@@ -982,13 +584,8 @@ public class TestQueryTestCase extends JUnitCore {
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    entries = (ArrayList<Entry>) queryresult.getResultObjects();
-
-                } else {
-                    //result[0] = error.getErrorCode();
-
+                    List<Entry> entries = queryresult.getResultObjects();
                 }
             }
         });
@@ -998,24 +595,16 @@ public class TestQueryTestCase extends JUnitCore {
 
 
     @Test
-    public void test_36_includeReferenceExcept_fetch() throws InterruptedException {
-        final Object[] result = new Object[]{new Object()};
-        final Query query = stack.contentType("product").query().where("uid", "blt7801c5d40cbbe979");
-
+    public void test_32_includeReferenceExcept_fetch() {
+        query = query.where("uid", "blt7801c5d40cbbe979");
         ArrayList<String> strings = new ArrayList<>();
         strings.add("title");
-
         query.exceptWithReferenceUid(strings, "category");
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    entries = (ArrayList<Entry>) queryresult.getResultObjects();
-
-                } else {
-                    //result[0] = error.getErrorCode();
-
+                    List<Entry> entries = queryresult.getResultObjects();
                 }
             }
         });
@@ -1025,273 +614,104 @@ public class TestQueryTestCase extends JUnitCore {
 
 
     @Test
-    public void test_37_findOne() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_33_findOne() {
         query.includeCount();
         query.where("in_stock", true);
-        final Object[] result = new Object[2];
-
         query.findOne(new SingleQueryResultCallback() {
             @Override
             public void onCompletion(ResponseType responseType, Entry entry, Error error) {
                 if (error == null) {
-                    result[0] = entry;
-
-                } else {
-                    //result[0] = error.getErrorCode();
 
                 }
             }
         });
-
-        if (result.length>0){
-            Entry entry = (Entry) result[0];
-            System.out.print(" result :-->"+result.toString());
-        }
-
-
     }
 
 
     @Test
-    public void test_38_complexFind() throws InterruptedException, ParseException {
-
-        ContentType contentType = stack.contentType("product");
-
-        Query query = contentType.query();
-        final Object[] result = new Object[]{new Object()};
-
+    public void test_34_complexFind() {
         query.notEqualTo("title", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.*************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.*************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.*************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.*************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.************************************Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.*******");
         query.includeCount();
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getResultObjects();
-                    logger.info("responseType = [" + responseType + "], queryresult = [" + queryresult.getResultObjects().size() + "]");
-
-                } else {
-
+                    List<Entry> entries = queryresult.getResultObjects();
                 }
             }
         });
-
-
-    }
-
-
-
-
-
-       /* include content type added*/
-
-
-
-
-       @Test
-       public void test_39_includeSchema() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
-           final Object[] result = new Object[]{new Object()};
-
-        query.find(new QueryResultsCallBack() {
-            @Override
-            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
-                if (error == null) {
-                    result[0] = queryresult.getSchema();
-
-                } else {
-                    result[0] = error.getErrorCode();
-
-                }
-            }
-        });
-
-        //JSONArray schema = null;
-        //schema = (JSONArray) result[0];
-        //assertTrue(schema !=  null);
     }
 
 
     @Test
-    public void test_40_includeContentType() throws InterruptedException, ParseException {
+    public void test_35_includeSchema() {
+        query.find(new QueryResultsCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
+                JSONArray result;
+                if (error == null) {
+                    result = queryresult.getSchema();
+                }
+            }
+        });
+    }
 
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+
+    @Test
+    public void test_36_includeContentType() {
         query.includeContentType();
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getContentType();
-
-                } else {
-                    result[0] = error.getErrorCode();
-
+                    JSONObject entries = queryresult.getContentType();
                 }
             }
         });
-
-        JSONObject schema = null;
-        schema = (JSONObject) result[0];
-       // assertTrue(schema !=  null);
     }
 
 
-
     @Test
-    public void test_41_include_content_type() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_38_include_content_type() {
         query.includeContentType();
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
+                JSONObject result;
                 if (error == null) {
-                    result[0] = queryresult.getContentType();
-
-                } else {
-                    result[0] = error.getErrorCode();
-
+                    result = queryresult.getContentType();
                 }
             }
         });
-
-        JSONObject schema = null;
-        schema = (JSONObject) result[0];
-//        assertTrue(schema !=  null);
     }
 
 
-
-
     @Test
-    public void test_42_include_content_type() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_39_include_content_type() {
         query.includeContentType();
-        final Object[] result = new Object[]{new Object()};
-
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getContentType();
-
-                } else {
-                    result[0] = error.getErrorCode();
-
+                    JSONObject entries = queryresult.getContentType();
                 }
             }
         });
-
-        JSONObject schema = null;
-        schema = (JSONObject) result[0];
-        //assertTrue(schema !=  null);
     }
 
 
-
-
-
-
     @Test
-    public void test_44_addParams() throws InterruptedException, ParseException {
-
-        ContentType ct = stack.contentType("product");
-        Query query = ct.query();
+    public void test_40_addParams() throws InterruptedException, ParseException {
         query.addParam("someKey", "someObject");
-        final Object[] result = new Object[]{new Object()};
         query.find(new QueryResultsCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
                 if (error == null) {
-                    result[0] = queryresult.getContentType();
-
-                } else {
-                    result[0] = error.getErrorCode();
-
+                    JSONObject entries = queryresult.getContentType();
                 }
             }
         });
 
     }
-
-
-
-
-
-    @Test
-    public void test_45_check_in_query_key_method_whereIn(){
-
-        Stack where_stack = null;
-        try {
-            where_stack = Contentstack.stack("blt20962a819b57e233", "blt01638c90cc28fb6f", "production");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        ContentType ct = where_stack.contentType("product");
-        Query query = ct.query();
-        query.locale("en-us");
-        query.where("title","Apple Inc");
-        query.whereIn("brand", query);
-        query.find(new QueryResultsCallBack() {
-            @Override
-            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
-                if (error == null) {
-                    assertTrue(true);
-                }
-            }
-        });
-
-    }
-
-
-
-    @Test
-    public void test_46_check_nin_query_key_method_whereNotIn(){
-
-        Stack where_stack = null;
-        try {
-            where_stack = Contentstack.stack("blt20962a819b57e233", "blt01638c90cc28fb6f", "production");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        assert where_stack != null;
-        ContentType ct = where_stack.contentType("product");
-        Query query = ct.query();
-        query.locale("en-us");
-        query.where("title","Apple Inc");
-        query.whereNotIn("brand", query);
-        query.find(new QueryResultsCallBack() {
-            @Override
-            public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
-
-                if (error == null) {
-                    assertTrue(true);
-                }
-            }
-        });
-
-    }
-
-
 
 }

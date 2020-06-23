@@ -1,7 +1,6 @@
 package com.contentstack.test;
-
-import com.contentstack.sdk.Error;
 import com.contentstack.sdk.*;
+import com.contentstack.sdk.Error;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
@@ -11,36 +10,26 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 
-public class TestSyncTestCase {
+public class SyncTestCase {
 
-    final Logger logger = LogManager.getLogger(TestSyncTestCase.class.getName());
+    final Logger logger = LogManager.getLogger(SyncTestCase.class.getName());
 
-    private Stack stack;
+    private final Stack stack;
     private int itemsSize = 0;
     private int counter = 0;
     private String dateISO = null;
-    private int include_count = 0;
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-    public TestSyncTestCase() throws Exception {
-        //Configurator.initialize(new DefaultConfiguration());
-
-        Config config = new Config();
-        config.setHost("cdn.contentstack.io");
-        String prod_api_key = "blt477ba55f9a67bcdf";
-        String prod_delivery_Token = "cs7731f03a2feef7713546fde5";
-        String environment = "web";
-
-        //setup for EU uncomment below
-        //config.setRegion(Config.ContentstackRegion.EU);
-        //String prod_api_key = "bltec63b57f491547fe";
-        //String prod_delivery_Token = "cs5834dc67621234eb68fce5dd";
-
-        stack = Contentstack.stack(prod_api_key, prod_delivery_Token, environment, config);
+    public SyncTestCase() throws Exception {
+        String API_KEY = "blt477ba55f9a67bcdf";
+        String DELIVERY_TOKEN = "cs7731f03a2feef7713546fde5";
+        String ENVIRONMENT = "web";
+        stack = Contentstack.stack(API_KEY, DELIVERY_TOKEN, ENVIRONMENT);
     }
 
 
@@ -54,17 +43,15 @@ public class TestSyncTestCase {
                 if (error == null) {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
-                    String sync_token = syncStack.getSyncToken();
-                    logger.info( "sync stack size  :"+syncStack.getItems().size());
-                    logger.info("sync stack count  :"+syncStack.getCount());
-                    syncStack.getItems().forEach(item-> logger.info(  item.toString()));
+                    logger.info("sync stack size  :" + syncStack.getItems().size());
+                    logger.info("sync stack count  :" + syncStack.getCount());
+                    syncStack.getItems().forEach(item -> logger.info(item.toString()));
 
                     assertEquals(counter, syncStack.getCount());
                 }
-            }});
+            }
+        });
     }
-
-
 
 
     @Test
@@ -75,7 +62,7 @@ public class TestSyncTestCase {
                 if (error == null) {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
-                    assertEquals( itemsSize, syncStack.getItems().size());
+                    assertEquals(itemsSize, syncStack.getItems().size());
                 }
             }
         });
@@ -92,10 +79,9 @@ public class TestSyncTestCase {
                 if (error == null) {
                     itemsSize += syncStack.getItems().size();
                     counter = syncStack.getCount();
-
-                    logger.info("sync pagination size  :"+syncStack.getItems().size());
-                    logger.info("sync pagination count  :"+syncStack.getCount());
-                    syncStack.getItems().forEach(item-> logger.info( "Pagination"+item.toString()));
+                    logger.info("sync pagination size  :" + syncStack.getItems().size());
+                    logger.info("sync pagination count  :" + syncStack.getCount());
+                    syncStack.getItems().forEach(item -> logger.info("Pagination" + item.toString()));
                     //assertEquals( itemsSize, itemsSize);
                 }
             }
@@ -118,7 +104,7 @@ public class TestSyncTestCase {
                         if (jsonObject1.has("event_at")) {
 
                             dateISO = jsonObject1.optString("event_at");
-                            logger.info( "date iso -->"+dateISO);
+                            logger.info("date iso -->" + dateISO);
                             String serverDate = returnDateFromISOString(dateISO);
                             Date dateServer = null;
                             try {
@@ -126,7 +112,7 @@ public class TestSyncTestCase {
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-                            logger.info( "dateServer -->"+dateServer);
+                            logger.info("dateServer -->" + dateServer);
                             assert dateServer != null;
                             int caparator = dateServer.compareTo(start_date);
                             assertEquals(1, caparator);
@@ -137,27 +123,22 @@ public class TestSyncTestCase {
                 }
 
 
-            }});
+            }
+        });
     }
-
-
-
 
 
     @Test
     public void testSyncWithContentType() {
-
         stack.syncContentType("session", new SyncResultCallBack() {
             @Override
             public void onCompletion(SyncStack syncStack, Error error) {
                 if (error == null) {
                     itemsSize += syncStack.getItems().size();
                     counter = syncStack.getCount();
-
-                    logger.info("sync content type size  :"+syncStack.getItems().size());
-                    logger.info("sync content type count  :"+syncStack.getCount());
-                    syncStack.getItems().forEach(item-> logger.info( "content type: "+item.toString()));
-
+                    logger.info("sync content type size  :" + syncStack.getItems().size());
+                    logger.info("sync content type count  :" + syncStack.getCount());
+                    syncStack.getItems().forEach(item -> logger.info("content type: " + item.toString()));
                     //assertEquals(100, itemsSize);
                 }
             }
@@ -165,7 +146,6 @@ public class TestSyncTestCase {
 
 
     }
-
 
 
     @Test
@@ -179,28 +159,26 @@ public class TestSyncTestCase {
                     counter = syncStack.getCount();
                     ArrayList<JSONObject> items = syncStack.getItems();
                     String dataObject = null;
-                    for (JSONObject object: items){
+                    for (JSONObject object : items) {
                         if (object.has("data"))
                             dataObject = object.optJSONObject("data").optString("locale");
                         assert dataObject != null;
-                        logger.info("locale dataObject: --> "+ dataObject);
+                        logger.info("locale dataObject: --> " + dataObject);
 
                         if (!dataObject.isEmpty()) {
-                            logger.info("locale dataObject: --> "+ dataObject);
+                            logger.info("locale dataObject: --> " + dataObject);
                             assertEquals("en-us", dataObject);
                         }
                     }
 
-                    logger.info("sync stack size  :"+syncStack.getItems().size());
-                    logger.info("sync stack count  :"+syncStack.getCount());
-                    syncStack.getItems().forEach(item-> logger.info(item.toString()));
+                    logger.info("sync stack size  :" + syncStack.getItems().size());
+                    logger.info("sync stack count  :" + syncStack.getCount());
+                    syncStack.getItems().forEach(item -> logger.info(item.toString()));
                 }
             }
         });
 
     }
-
-
 
 
     @Test
@@ -213,37 +191,34 @@ public class TestSyncTestCase {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
 
-                    logger.info( "publish type==>"+counter);
-                    syncStack.getItems().forEach(items-> logger.info( "publish type"+items.toString()));
+                    logger.info("publish type==>" + counter);
+                    syncStack.getItems().forEach(items -> logger.info("publish type" + items.toString()));
 
                     assertEquals(itemsSize, syncStack.getItems().size());
-                }else {
+                } else {
                     // Error block
-                    logger.info( "publish type error !");
+                    logger.info("publish type error !");
                 }
 
             }
         });
 
     }
-
-
-
 
 
     @Test
     public void testSyncWithAll() throws ParseException {
 
         Date start_date = sdf.parse("2018-10-10");
-        stack.sync( "session", start_date, Language.ENGLISH_UNITED_STATES, Stack.PublishType.entry_published, new SyncResultCallBack() {
+        stack.sync("session", start_date, Language.ENGLISH_UNITED_STATES, Stack.PublishType.entry_published, new SyncResultCallBack() {
             @Override
             public void onCompletion(SyncStack syncStack, Error error) {
 
                 if (error == null) {
                     itemsSize = syncStack.getItems().size();
                     counter = syncStack.getCount();
-                    logger.info( "stack with all type==>"+counter);
-                    syncStack.getItems().forEach(items-> logger.info(  "sync with all type: "+items.toString()));
+                    logger.info("stack with all type==>" + counter);
+                    syncStack.getItems().forEach(items -> logger.info("sync with all type: " + items.toString()));
                     assertEquals(itemsSize, syncStack.getItems().size());
                 }
 
@@ -251,7 +226,6 @@ public class TestSyncTestCase {
 
         });
     }
-
 
 
     @Test
@@ -271,14 +245,13 @@ public class TestSyncTestCase {
         where_stack.getContentTypes(params, new ContentTypesCallback() {
             @Override
             public void onCompletion(ContentTypesModel contentTypesModel, Error error) {
-                if (error == null){
+                if (error == null) {
                     logger.debug(contentTypesModel.getResponse().toString());
                 }
             }
         });
 
     }
-
 
 
     @Test
@@ -290,17 +263,18 @@ public class TestSyncTestCase {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ContentType  contentType = where_stack.contentType("product");
+        assert where_stack != null;
+        ContentType contentType = where_stack.contentType("product");
         JSONObject params = new JSONObject();
         params.put("include_snippet_schema", true);
         params.put("limit", 3);
         contentType.fetch(params, new ContentTypesCallback() {
             @Override
             public void onCompletion(ContentTypesModel contentTypesModel, Error error) {
-                if (error==null){
-                    logger.info( "single content:"+ contentTypesModel.getResponse());
-                }else {
-                    logger.info( "Error"+ error.getErrorMessage());
+                if (error == null) {
+                    logger.info("single content:" + contentTypesModel.getResponse());
+                } else {
+                    logger.info("Error" + error.getErrorMessage());
                 }
             }
         });
@@ -308,8 +282,52 @@ public class TestSyncTestCase {
 
 
     private String returnDateFromISOString(String isoDateString) {
-        String[] dateFormate = isoDateString.split("T");
-        return dateFormate[0];
+        String[] dateFormat = isoDateString.split("T");
+        return dateFormat[0];
     }
+
+
+    @Test
+    public void testShannonQuery() throws Exception {
+        Config config = new Config();
+        config.setHost("cdn.blz-contentstack.com");
+        Stack stack = Contentstack.stack("blt286175c11a6b3f4c", "cs75fa0fd3991b7d602a77d6d2", "qa--legacy--all", config);
+        Entry entry = stack.contentType("blog").entry("bltba9f49b1e123ec4f");
+        entry.fetch(new EntryResultCallBack() {
+            @Override
+            public void onCompletion(ResponseType responseType, Error error) {
+                logger.info(error);
+                //entry.toJSON().getString("content")
+                logger.info(entry.toJSON());
+            }
+        });
+    }
+
+
+    @Test
+    public void testJavaExampleApp() {
+
+        try {
+            final Stack stack = Contentstack.stack("blt7979d15c28261b93", "cs17465ae5683299db9d259cb6", "production");
+            ContentType contentType = stack.contentType("news");
+            Query query = contentType.query();
+            query.find(new QueryResultsCallBack() {
+                @Override
+                public void onCompletion(ResponseType responseType, QueryResult queryresult, Error error) {
+                    if (error == null) {
+                        List<Entry> result = queryresult.getResultObjects();
+                        for (Entry entry : result){
+                            System.out.println("Entry Title: " + entry.toJSON().getString("title"));
+                        }
+                    }
+                }
+            });
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
 
 }
