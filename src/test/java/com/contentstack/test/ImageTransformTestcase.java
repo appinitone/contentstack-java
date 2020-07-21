@@ -32,6 +32,8 @@ public class ImageTransformTestcase extends JUnitCore {
             String DEFAULT_API_KEY = credential.optString("api_key");
             String DEFAULT_DELIVERY_TOKEN = credential.optString("delivery_token");
             String DEFAULT_ENV = credential.optString("environment");
+            String  DEFAULT_HOST = credential.optString("host");
+            config.setHost(DEFAULT_HOST);
             stack = Contentstack.stack(DEFAULT_API_KEY, DEFAULT_DELIVERY_TOKEN, DEFAULT_ENV, config);
         }
         latch = new CountDownLatch(1);

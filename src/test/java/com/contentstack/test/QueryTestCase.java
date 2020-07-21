@@ -25,11 +25,11 @@ public class QueryTestCase {
         JSONObject credential = new ReadJsonFile().readCredentials();
         if (credential != null) {
             Config config = new Config();
-            String  host = credential.optString("host");
-            config.setHost(host);
             String DEFAULT_API_KEY = credential.optString("api_key");
             String DEFAULT_DELIVERY_TOKEN = credential.optString("delivery_token");
             String DEFAULT_ENV = credential.optString("environment");
+            String  DEFAULT_HOST = credential.optString("host");
+            config.setHost(DEFAULT_HOST);
             stack = Contentstack.stack(DEFAULT_API_KEY, DEFAULT_DELIVERY_TOKEN, DEFAULT_ENV, config);
             query = stack.contentType("product").query();
         }

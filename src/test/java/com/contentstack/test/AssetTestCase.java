@@ -20,6 +20,7 @@ public class AssetTestCase {
     private static String assetUid;
     private static Stack stack;
     private static CountDownLatch latch;
+    private static String DEFAULT_HOST;
 
 
     @BeforeClass
@@ -27,11 +28,11 @@ public class AssetTestCase {
         JSONObject credential = new ReadJsonFile().readCredentials();
         if (credential != null) {
             Config config = new Config();
-            String  host = credential.optString("host");
-            config.setHost(host);
             String DEFAULT_API_KEY = credential.optString("api_key");
             String DEFAULT_DELIVERY_TOKEN = credential.optString("delivery_token");
             String DEFAULT_ENV = credential.optString("environment");
+            DEFAULT_HOST = credential.optString("host");
+            config.setHost(DEFAULT_HOST);
             stack = Contentstack.stack(DEFAULT_API_KEY, DEFAULT_DELIVERY_TOKEN, DEFAULT_ENV, config);
         }
         latch = new CountDownLatch(1);
@@ -109,10 +110,14 @@ public class AssetTestCase {
                     assertEquals("sys_blt309cacf8ab432f62", asset.getUpdatedBy());
                     assertEquals("phoenix2.jpg", asset.getFileName());
                     assertEquals("482141", asset.getFileSize());
-                    assertEquals("https://images.contentstack.io/v3/assets/blt12c8ad610ff4ddc2/blt5312f71416d6e2c8/5704eda29ebb5cce3597b877/phoenix2.jpg", asset.getUrl());
-                } else {
-                    assertEquals(422, error.getErrorCode());
+                    if (DEFAULT_HOST.equalsIgnoreCase("cdn.contentstack.io")){
+                        assertEquals("https://images.contentstack.io/v3/assets/blt12c8ad610ff4ddc2/blt5312f71416d6e2c8/5704eda29ebb5cce3597b877/phoenix2.jpg", asset.getUrl());
+                    }else {
+                        assertEquals("https://stag-images.contentstack.io/v3/assets/blt12c8ad610ff4ddc2/blt5312f71416d6e2c8/5704eda29ebb5cce3597b877/phoenix2.jpg", asset.getUrl());
+                    }
 
+                } else {
+                    assertEquals(404, error.getErrorCode());
                 }
             }
         });
@@ -148,7 +153,11 @@ public class AssetTestCase {
             @Override
             public void onCompletion(ResponseType responseType, List<Asset> assets, Error error) {
                 if (error == null) {
-                    assertEquals(14, assetLibrary.getCount());
+                    if(DEFAULT_HOST.equalsIgnoreCase("cdn.contentstack.io")){
+                        assertEquals(14, assetLibrary.getCount());
+                    }else {
+                        assertEquals(20, assetLibrary.getCount());
+                    }
                 }
             }
         });

@@ -1,5 +1,4 @@
 package com.contentstack.test;
-
 import com.contentstack.sdk.Error;
 import com.contentstack.sdk.*;
 import org.apache.logging.log4j.LogManager;
@@ -9,11 +8,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
-
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
-
-import static junit.framework.TestCase.*;
+import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -37,6 +36,8 @@ public class EntryTestCase {
             String DEFAULT_API_KEY = credential.optString("api_key");
             String DEFAULT_DELIVERY_TOKEN = credential.optString("delivery_token");
             String DEFAULT_ENV = credential.optString("environment");
+            String  DEFAULT_HOST = credential.optString("host");
+            config.setHost(DEFAULT_HOST);
             stack = Contentstack.stack(DEFAULT_API_KEY, DEFAULT_DELIVERY_TOKEN, DEFAULT_ENV, config);
         }
         latch = new CountDownLatch(1);
@@ -118,7 +119,7 @@ public class EntryTestCase {
     @Test
     public void test_04_includeReference_fetch() {
         final Entry entry = stack.contentType(content_type_uid).entry(entryUID);
-        entry.includeReference("category");
+        entry.includeReference(new String[]{"brand","categories"});
         entry.fetch(new EntryResultCallBack() {
             @Override
             public void onCompletion(ResponseType responseType, Error error) {
